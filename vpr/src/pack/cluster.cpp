@@ -123,9 +123,7 @@ std::map<t_logical_block_type_ptr, size_t> do_clustering(const t_packer_opts& pa
     t_cluster_progress_stats cluster_stats;
 
     //int num_molecules, num_molecules_processed, mols_since_last_print, blocks_since_last_analysis,
-    int num_blocks_hill_added, max_pb_depth,
-        seedindex, savedseedindex /* index of next most timing critical block */,
-        detailed_routing_stage;
+    int num_blocks_hill_added, max_pb_depth, detailed_routing_stage;
 
     const int verbosity = packer_opts.pack_verbosity;
 
@@ -178,8 +176,6 @@ std::map<t_logical_block_type_ptr, size_t> do_clustering(const t_packer_opts& pa
     helper_ctx.max_cluster_size = 0;
     max_pb_depth = 0;
 
-    seedindex = 0;
-
     const t_molecule_stats max_molecule_stats = calc_max_molecules_stats(molecule_head);
 
     mark_all_molecules_valid(molecule_head);
@@ -226,7 +222,9 @@ std::map<t_logical_block_type_ptr, size_t> do_clustering(const t_packer_opts& pa
 
     auto seed_atoms = initialize_seed_atoms(packer_opts.cluster_seed_type, max_molecule_stats, atom_criticality);
 
-    istart = get_highest_gain_seed_molecule(&seedindex, seed_atoms);
+    /* index of next most timing critical block */
+    int seed_index = 0;
+    istart = get_highest_gain_seed_molecule(seed_index, seed_atoms);
 
     print_pack_status_header();
 
@@ -236,7 +234,7 @@ std::map<t_logical_block_type_ptr, size_t> do_clustering(const t_packer_opts& pa
 
     while (istart != nullptr) {
         is_cluster_legal = false;
-        savedseedindex = seedindex;
+        int saved_seed_index = seed_index;
         for (detailed_routing_stage = (int)E_DETAILED_ROUTE_AT_END_ONLY; !is_cluster_legal && detailed_routing_stage != (int)E_DETAILED_ROUTE_INVALID; detailed_routing_stage++) {
             ClusterBlockId clb_index(helper_ctx.total_clb_num);
 
@@ -368,10 +366,10 @@ std::map<t_logical_block_type_ptr, size_t> do_clustering(const t_packer_opts& pa
             is_cluster_legal = check_cluster_legality(verbosity, detailed_routing_stage, router_data);
 
             if (is_cluster_legal) {
-                istart = save_cluster_routing_and_pick_new_seed(packer_opts, helper_ctx.total_clb_num, seed_atoms, num_blocks_hill_added, clustering_data.intra_lb_routing, seedindex, cluster_stats, router_data);
+                istart = save_cluster_routing_and_pick_new_seed(packer_opts, helper_ctx.total_clb_num, seed_atoms, num_blocks_hill_added, clustering_data.intra_lb_routing, seed_index, cluster_stats, router_data);
                 store_cluster_info_and_free(packer_opts, clb_index, logic_block_type, le_pb_type, le_count, clb_inter_blk_nets);
             } else {
-                free_data_and_requeue_used_mols_if_illegal(clb_index, savedseedindex, num_used_type_instances, helper_ctx.total_clb_num, seedindex);
+                free_data_and_requeue_used_mols_if_illegal(clb_index, saved_seed_index, num_used_type_instances, helper_ctx.total_clb_num, seed_index);
             }
             free_router_data(router_data);
             router_data = nullptr;

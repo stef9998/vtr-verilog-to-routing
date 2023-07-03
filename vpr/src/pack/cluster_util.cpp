@@ -1639,7 +1639,7 @@ t_pack_molecule* save_cluster_routing_and_pick_new_seed(const t_packer_opts& pac
     router_data->saved_lb_nets = nullptr;
 
     //Pick a new seed
-    next_seed = get_highest_gain_seed_molecule(&seedindex, seed_atoms);
+    next_seed = get_highest_gain_seed_molecule(seedindex, seed_atoms);
 
     if (packer_opts.timing_driven) {
         if (num_blocks_hill_added > 0) {
@@ -2823,15 +2823,18 @@ std::vector<AtomBlockId> initialize_seed_atoms(const e_cluster_seed seed_type,
     return seed_atoms;
 }
 
-t_pack_molecule* get_highest_gain_seed_molecule(int* seedindex, const std::vector<AtomBlockId> seed_atoms) {
+t_pack_molecule* get_highest_gain_seed_molecule(int& seed_index, const std::vector<AtomBlockId>& seed_atoms) {
     auto& atom_ctx = g_vpr_ctx.atom();
 
-    while (*seedindex < static_cast<int>(seed_atoms.size())) {
-        AtomBlockId blk_id = seed_atoms[(*seedindex)++];
+    while (seed_index < static_cast<int>(seed_atoms.size())) {
+        AtomBlockId blk_id = seed_atoms[seed_index++];
 
+        // Check if the atom has already been assigned to a cluster
         if (atom_ctx.lookup.atom_clb(blk_id) == ClusterBlockId::INVALID()) {
             t_pack_molecule* best = nullptr;
 
+            // Iterate over all the molecules associated with the selected atom
+            // and select the one with the highest gain
             auto rng = atom_ctx.atom_molecules.equal_range(blk_id);
             for (const auto& kv : vtr::make_range(rng.first, rng.second)) {
                 t_pack_molecule* molecule = kv.second;

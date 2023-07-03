@@ -29,11 +29,19 @@
 
 static bool try_size_device_grid(const t_arch& arch, const std::map<t_logical_block_type_ptr, size_t>& num_type_instances, float target_device_utilization, std::string device_layout_name);
 
-static t_ext_pin_util_targets parse_target_external_pin_util(std::vector<std::string> specs);
+static t_ext_pin_util_targets parse_target_external_pin_util(const std::vector<std::string>& specs);
 static std::string target_external_pin_util_to_string(const t_ext_pin_util_targets& ext_pin_utils);
 
-static t_pack_high_fanout_thresholds parse_high_fanout_thresholds(std::vector<std::string> specs);
+static t_pack_high_fanout_thresholds parse_high_fanout_thresholds(const std::vector<std::string>& specs);
 static std::string high_fanout_thresholds_to_string(const t_pack_high_fanout_thresholds& hf_thresholds);
+
+/**
+ * @brief Counts the total number of models
+ *
+ * @param user_models A linked list of models
+ * @return int The total number of models in the linked list
+ */
+static int count_models(const t_model* user_models);
 
 bool try_pack(t_packer_opts* packer_opts,
               const t_analysis_opts* analysis_opts,
@@ -46,23 +54,13 @@ bool try_pack(t_packer_opts* packer_opts,
 
     std::unordered_set<AtomNetId> is_clock;
     std::unordered_map<AtomBlockId, t_pb_graph_node*> expected_lowest_cost_pb_gnode; //The molecules associated with each atom block
-    const t_model* cur_model;
     t_clustering_data clustering_data;
     std::vector<t_pack_patterns> list_of_packing_patterns;
     VTR_LOG("Begin packing '%s'.\n", packer_opts->circuit_file_name.c_str());
 
     /* determine number of models in the architecture */
-    helper_ctx.num_models = 0;
-    cur_model = user_models;
-    while (cur_model) {
-        helper_ctx.num_models++;
-        cur_model = cur_model->next;
-    }
-    cur_model = library_models;
-    while (cur_model) {
-        helper_ctx.num_models++;
-        cur_model = cur_model->next;
-    }
+    helper_ctx.num_models = count_models(user_models);
+    helper_ctx.num_models += count_models(library_models);
 
     is_clock = alloc_and_load_is_clock(packer_opts->global_clocks);
 
@@ -387,7 +385,7 @@ static bool try_size_device_grid(const t_arch& arch, const std::map<t_logical_bl
     return fits_on_device;
 }
 
-static t_ext_pin_util_targets parse_target_external_pin_util(std::vector<std::string> specs) {
+static t_ext_pin_util_targets parse_target_external_pin_util(const std::vector<std::string>& specs) {
     t_ext_pin_util_targets targets(1., 1.);
 
     if (specs.size() == 1 && specs[0] == "auto") {
@@ -433,7 +431,7 @@ static t_ext_pin_util_targets parse_target_external_pin_util(std::vector<std::st
         bool default_set = false;
         std::set<std::string> seen_block_types;
 
-        for (auto spec : specs) {
+        for (const auto& spec : specs) {
             t_ext_pin_util target_ext_pin_util(1., 1.);
 
             auto block_values = vtr::split(spec, ":");
@@ -521,7 +519,7 @@ static std::string target_external_pin_util_to_string(const t_ext_pin_util_targe
     return ss.str();
 }
 
-static t_pack_high_fanout_thresholds parse_high_fanout_thresholds(std::vector<std::string> specs) {
+static t_pack_high_fanout_thresholds parse_high_fanout_thresholds(const std::vector<std::string>& specs) {
     t_pack_high_fanout_thresholds high_fanout_thresholds(128);
 
     if (specs.size() == 1 && specs[0] == "auto") {
@@ -549,7 +547,7 @@ static t_pack_high_fanout_thresholds parse_high_fanout_thresholds(std::vector<st
         bool default_set = false;
         std::set<std::string> seen_block_types;
 
-        for (auto spec : specs) {
+        for (const auto& spec : specs) {
             auto block_values = vtr::split(spec, ":");
             std::string block_type;
             std::string value;
@@ -612,4 +610,20 @@ static std::string high_fanout_thresholds_to_string(const t_pack_high_fanout_thr
     }
 
     return ss.str();
+}
+
+static int count_models(const t_model* user_models) {
+    if (user_models == nullptr) {
+        return 0;
+    }
+
+    const t_model* cur_model = user_models;
+    int n_models = 0;
+
+    while (cur_model) {
+        n_models++;
+        cur_model = cur_model->next;
+    }
+
+    return n_models;
 }
