@@ -188,14 +188,14 @@ class t_ext_pin_util_targets {
     t_ext_pin_util_targets(float default_in_util, float default_out_util);
 
     ///@brief Returns the input pin util of the specified block (or default if unspecified)
-    t_ext_pin_util get_pin_util(std::string block_type_name) const;
+    t_ext_pin_util get_pin_util(const std::string& block_type_name) const;
 
   public:
     /**
      * @brief Sets the pin util for the specified block type
      * @return true if non-default was previously set
      */
-    void set_block_pin_util(std::string block_type_name, t_ext_pin_util target);
+    void set_block_pin_util(const std::string& block_type_name, t_ext_pin_util target);
 
     /**
      * @brief Sets the default pin util
@@ -213,14 +213,14 @@ class t_pack_high_fanout_thresholds {
     t_pack_high_fanout_thresholds() = default;
     t_pack_high_fanout_thresholds(int threshold);
 
-    int get_threshold(std::string block_type_name) const;
+    int get_threshold(const std::string& block_type_name) const;
 
   public:
     /**
      * @brief Sets the pin util for the specified block type
      * @return true if non-default was previously set
      */
-    void set(std::string block_type_name, int threshold);
+    void set(const std::string& block_type_name, int threshold);
 
     /**
      * @brief Sets the default pin util
