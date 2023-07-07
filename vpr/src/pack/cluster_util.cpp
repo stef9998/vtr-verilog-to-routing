@@ -3346,11 +3346,15 @@ std::map<const t_model*, std::vector<t_logical_block_type_ptr>> identify_primiti
     auto& device_ctx = g_vpr_ctx.device();
 
     std::set<const t_model*> unique_models;
+    // Find all logic models used in the netlist
     for (auto blk : atom_nlist.blocks()) {
         auto model = atom_nlist.block_model(blk);
         unique_models.insert(model);
     }
 
+    /* For each technology-mapped logic model, find logical block types
+     * that can accommodate that logic model
+     */
     for (auto model : unique_models) {
         model_candidates[model] = {};
 

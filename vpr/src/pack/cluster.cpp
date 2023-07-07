@@ -88,14 +88,11 @@ std::map<t_logical_block_type_ptr, size_t> do_clustering(const t_packer_opts& pa
                                                          const t_analysis_opts& analysis_opts,
                                                          const t_arch* arch,
                                                          t_pack_molecule* molecule_head,
-                                                         int num_models,
                                                          const std::unordered_set<AtomNetId>& is_clock,
                                                          const std::unordered_map<AtomBlockId, t_pb_graph_node*>& expected_lowest_cost_pb_gnode,
                                                          bool allow_unrelated_clustering,
                                                          bool balance_block_type_utilization,
                                                          std::vector<t_lb_type_rr_node>* lb_type_rr_graphs,
-                                                         const t_ext_pin_util_targets& ext_pin_util_targets,
-                                                         const t_pack_high_fanout_thresholds& high_fanout_thresholds,
                                                          AttractionInfo& attraction_groups,
                                                          bool& floorplan_regions_overfull,
                                                          t_clustering_data& clustering_data) {
@@ -135,7 +132,6 @@ std::map<t_logical_block_type_ptr, size_t> do_clustering(const t_packer_opts& pa
 
     std::map<t_logical_block_type_ptr, size_t> num_used_type_instances;
 
-    bool is_cluster_legal;
     enum e_block_pack_status block_pack_status;
 
     t_cluster_placement_stats* cur_cluster_placement_stats_ptr;
@@ -220,6 +216,7 @@ std::map<t_logical_block_type_ptr, size_t> do_clustering(const t_packer_opts& pa
                                  clustering_delay_calc, timing_info, atom_criticality);
     }
 
+    // Assign gain scores to atoms and sort them based on the scores.
     auto seed_atoms = initialize_seed_atoms(packer_opts.cluster_seed_type, max_molecule_stats, atom_criticality);
 
     /* index of next most timing critical block */
@@ -233,9 +230,10 @@ std::map<t_logical_block_type_ptr, size_t> do_clustering(const t_packer_opts& pa
      *****************************************************************/
 
     while (istart != nullptr) {
-        is_cluster_legal = false;
+        bool is_cluster_legal = false;
         int saved_seed_index = seed_index;
         for (detailed_routing_stage = (int)E_DETAILED_ROUTE_AT_END_ONLY; !is_cluster_legal && detailed_routing_stage != (int)E_DETAILED_ROUTE_INVALID; detailed_routing_stage++) {
+            // Use the total number created clusters so far as the ID for the new cluster
             ClusterBlockId clb_index(helper_ctx.total_clb_num);
 
             VTR_LOGV(verbosity > 2, "Complex block %d:\n", helper_ctx.total_clb_num);
@@ -249,7 +247,7 @@ std::map<t_logical_block_type_ptr, size_t> do_clustering(const t_packer_opts& pa
                               clb_index, istart,
                               num_used_type_instances,
                               packer_opts.target_device_utilization,
-                              num_models, helper_ctx.max_cluster_size,
+                              helper_ctx.num_models, helper_ctx.max_cluster_size,
                               arch, packer_opts.device_layout,
                               lb_type_rr_graphs, &router_data,
                               detailed_routing_stage, &cluster_ctx.clb_nlist,
@@ -279,8 +277,8 @@ std::map<t_logical_block_type_ptr, size_t> do_clustering(const t_packer_opts& pa
             //Progress dot for seed-block
             fflush(stdout);
 
-            t_ext_pin_util target_ext_pin_util = ext_pin_util_targets.get_pin_util(cluster_ctx.clb_nlist.block_type(clb_index)->name);
-            int high_fanout_threshold = high_fanout_thresholds.get_threshold(cluster_ctx.clb_nlist.block_type(clb_index)->name);
+            t_ext_pin_util target_ext_pin_util = helper_ctx.target_external_pin_util.get_pin_util(cluster_ctx.clb_nlist.block_type(clb_index)->name);
+            int high_fanout_threshold = helper_ctx.high_fanout_thresholds.get_threshold(cluster_ctx.clb_nlist.block_type(clb_index)->name);
             update_cluster_stats(istart, clb_index,
                                  is_clock, //Set of clock nets
                                  is_clock, //Set of global nets (currently all clocks)
@@ -343,7 +341,7 @@ std::map<t_logical_block_type_ptr, size_t> do_clustering(const t_packer_opts& pa
                                  helper_ctx.primitives_list,
                                  cluster_stats,
                                  helper_ctx.total_clb_num,
-                                 num_models,
+                                 helper_ctx.num_models,
                                  helper_ctx.max_cluster_size,
                                  clb_index,
                                  detailed_routing_stage,

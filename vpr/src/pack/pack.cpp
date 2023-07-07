@@ -112,10 +112,10 @@ bool try_pack(t_packer_opts* packer_opts,
     }
 
     helper_ctx.target_external_pin_util = parse_target_external_pin_util(packer_opts->target_external_pin_util);
-    t_pack_high_fanout_thresholds high_fanout_thresholds = parse_high_fanout_thresholds(packer_opts->high_fanout_threshold);
+    helper_ctx.high_fanout_thresholds = parse_high_fanout_thresholds(packer_opts->high_fanout_threshold);
 
     VTR_LOG("Packing with pin utilization targets: %s\n", target_external_pin_util_to_string(helper_ctx.target_external_pin_util).c_str());
-    VTR_LOG("Packing with high fanout thresholds: %s\n", high_fanout_thresholds_to_string(high_fanout_thresholds).c_str());
+    VTR_LOG("Packing with high fanout thresholds: %s\n", high_fanout_thresholds_to_string(helper_ctx.high_fanout_thresholds).c_str());
 
     bool allow_unrelated_clustering = false;
     if (packer_opts->allow_unrelated_clustering == e_unrelated_clustering::ON) {
@@ -141,14 +141,12 @@ bool try_pack(t_packer_opts* packer_opts,
         helper_ctx.num_used_type_instances = do_clustering(
             *packer_opts,
             *analysis_opts,
-            arch, atom_mutable_ctx.list_of_pack_molecules.get(), helper_ctx.num_models,
+            arch, atom_mutable_ctx.list_of_pack_molecules.get(),
             is_clock,
             expected_lowest_cost_pb_gnode,
             allow_unrelated_clustering,
             balance_block_type_util,
             lb_type_rr_graphs,
-            helper_ctx.target_external_pin_util,
-            high_fanout_thresholds,
             attraction_groups,
             floorplan_regions_overfull,
             clustering_data);
