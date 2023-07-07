@@ -1776,7 +1776,10 @@ void mark_and_update_partial_gain(const AtomNetId net_id,
         /* Optimization: It can be too runtime costly for marking all sinks for
          * a high fanout-net that probably has no hope of ever getting packed,
          * thus ignore those high fanout nets */
-        if (!is_global.count(net_id)) {
+        /* There are VCC and GND nets in the netlist. These nets have a high fanout,
+         * but their sinks do not necessarily have a logical relation with each other.
+         * Therefore, we exclude constant nets when evaluating high fanout connectivity. */
+        if (!is_global.count(net_id) && !atom_ctx.nlist.net_is_constant(net_id)) {
             /* If no low/medium fanout nets, we may need to consider
              * high fan-out nets for packing, so select one and store it */
             AtomNetId stored_net = cur_pb->pb_stats->tie_break_high_fanout_net;
@@ -2098,9 +2101,7 @@ void start_new_cluster(t_cluster_placement_stats* cluster_placement_stats,
 
     //Try packing into each candidate type
     bool success = false;
-    for (size_t i = 0; i < candidate_types.size(); i++) {
-        auto type = candidate_types[i];
-
+    for (auto type : candidate_types) {
         t_pb* pb = new t_pb;
         pb->pb_graph_node = type->pb_graph_head;
         alloc_and_load_pb_stats(pb, feasible_block_array_size);
