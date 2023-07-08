@@ -74,7 +74,7 @@ bool try_pack(t_packer_opts* packer_opts,
 
     is_clock = alloc_and_load_is_clock(packer_opts->global_clocks);
     is_global = find_likely_global_ctrl_nets(is_clock);
-    is_global.merge(is_clock);
+    is_global.insert(is_clock.begin(), is_clock.end());
 
     size_t num_p_inputs = 0;
     size_t num_p_outputs = 0;
