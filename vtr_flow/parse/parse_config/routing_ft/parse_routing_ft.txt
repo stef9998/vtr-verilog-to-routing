@@ -1,0 +1,16 @@
+# author: Lukas Freiberger
+# parsing configuration for evaluation of routing_ft
+
+# Key values
+vpr_status;output.txt;vpr_status=(.*)
+fpga_edges;routing_ft.out;Number of configurable Edges in FPGA: (.*)
+defect_edges;routing_ft.out;Number of defect Edges in FPGA after Fault Sim: (.*)
+mem_cells;routing_ft.out;Number of Memory Cells to set the Edges in FPGA: (.*)
+faulty_mem_cells;routing_ft.out;Number of total faults in Memory Cells: (.*)
+sa_0;routing_ft.out;Number of SA0 in Memory Cells: (.*) 
+sa_1;routing_ft.out;Number of SA1 in Memory Cells: (.*)
+ud;routing_ft.out;Number of UD in Memory Cells: (.*)
+total_connections_routed;vpr_ft.out;Router Stats: .*total_connections_routed: (\d+) .*
+critical_path_delay;vpr_ft.out;Final critical path delay \(least slack\): (.*) ns
+device_utilisation_pre;vpr.out;Device Utilization: (.*) \(target 1.00\)
+device_utilisation_post;vpr_ft.out;Device Utilization: (.*) \(target 1.00\)
