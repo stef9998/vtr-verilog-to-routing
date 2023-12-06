@@ -36,6 +36,9 @@ ace_extract_clk_from_blif_script_path = ace_path / "scripts" / "extract_clk_from
 vpr_path = root_path / "vpr"
 vpr_exe_path = vpr_path / "vpr"
 
+# Routing fault sim paths
+routing_ft_jar_path = root_path / "FPGARoutingSim" / "FPGARoutingSim.jar"
+
 # Flow scripts
 scripts_path = vtr_flow_path / "scripts"
 run_vtr_flow_path = scripts_path / "run_vtr_flow.py"
