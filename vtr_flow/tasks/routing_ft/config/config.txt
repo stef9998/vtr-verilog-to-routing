@@ -2,12 +2,13 @@
 circuits_dir=benchmarks/verilog
 
 # Path to directory of architectures to use
-archs_dir=arch/timing/fixed_size
+# archs_dir=arch/timing/fixed_size
+archs_dir=arch/timing
 
 # Add circuits to list to sweep
 #circuit_list_add=bgm.v
 #circuit_list_add=blob_merge.v
-circuit_list_add=boundtop.v
+#circuit_list_add=boundtop.v #seems to be not existing in benchmarks/ any more
 circuit_list_add=ch_intrinsics.v
 #circuit_list_add=diffeq1.v
 #circuit_list_add=diffeq2.v
@@ -26,18 +27,28 @@ circuit_list_add=sha.v
 #circuit_list_add=stereovision3.v
 
 # Add architectures to list to sweep
-arch_list_add=k6_frac_N10_mem32K_40nm_30x30.xml
+# arch_list_add=k6_frac_N10_mem32K_40nm_30x30.xml
+arch_list_add=k6_frac_N10_mem32K_40nm.xml
 
 # Parse info and how to parse
 parse_file=routing_ft/parse_routing_ft.txt
 
 # Script parameters to run fault tolerance
-script_params_list_add=--route_chan_width 80 --make_ft --fault_rate 0.05
-script_params_list_add=--route_chan_width 80 --make_ft --fault_rate 0.075
-script_params_list_add=--route_chan_width 80 --make_ft --fault_rate 0.1
-script_params_list_add=--route_chan_width 80 --make_ft --fault_rate 0.125
-script_params_list_add=--route_chan_width 80 --make_ft --fault_rate 0.15
-script_params_list_add=--route_chan_width 80 --make_ft --fault_rate 0.175
-script_params_list_add=--route_chan_width 80 --make_ft --fault_rate 0.2
-script_params_list_add=--route_chan_width 80 --make_ft --fault_rate 0.225
-script_params_list_add=--route_chan_width 80 --make_ft --fault_rate 0.25
+#script_params_list_add=--route_chan_width 80 --make_ft --fault_rate 0.05
+#script_params_list_add=--route_chan_width 80 --make_ft --fault_rate 0.075
+#script_params_list_add=--route_chan_width 80 --make_ft --fault_rate 0.1
+#script_params_list_add=--route_chan_width 80 --make_ft --fault_rate 0.125
+#script_params_list_add=--route_chan_width 80 --make_ft --fault_rate 0.15
+#script_params_list_add=--route_chan_width 80 --make_ft --fault_rate 0.175
+#script_params_list_add=--route_chan_width 80 --make_ft --fault_rate 0.2
+#script_params_list_add=--route_chan_width 80 --make_ft --fault_rate 0.225
+#script_params_list_add=--route_chan_width 80 --make_ft --fault_rate 0.25
+script_params_list_add=--route_chan_width 80 --make_ft --fault_rate 0.05 -start odin
+script_params_list_add=--route_chan_width 80 --make_ft --fault_rate 0.075 -start odin
+script_params_list_add=--route_chan_width 80 --make_ft --fault_rate 0.1 -start odin
+script_params_list_add=--route_chan_width 80 --make_ft --fault_rate 0.125 -start odin
+script_params_list_add=--route_chan_width 80 --make_ft --fault_rate 0.15 -start odin
+script_params_list_add=--route_chan_width 80 --make_ft --fault_rate 0.175 -start odin
+script_params_list_add=--route_chan_width 80 --make_ft --fault_rate 0.2 -start odin
+script_params_list_add=--route_chan_width 80 --make_ft --fault_rate 0.225 -start odin
+script_params_list_add=--route_chan_width 80 --make_ft --fault_rate 0.25 -start odin
