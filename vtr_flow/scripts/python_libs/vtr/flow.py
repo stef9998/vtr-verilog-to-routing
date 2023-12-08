@@ -291,6 +291,7 @@ def run(
             vpr_args["route_chan_width"] = 300
             route_fixed_w = True
 
+        # added flow for adding defects
         if "make_ft" in vpr_args:
             # delete argument "make_ft" from argument list
             vpr_args.move_to_end("make_ft")
