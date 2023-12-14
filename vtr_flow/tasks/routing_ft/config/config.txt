@@ -2,8 +2,8 @@
 circuits_dir=benchmarks/verilog
 
 # Path to directory of architectures to use
-# archs_dir=arch/timing/fixed_size
-archs_dir=arch/timing
+archs_dir=arch/timing/fixed_size
+# archs_dir=arch/timing
 
 # Add circuits to list to sweep
 #circuit_list_add=bgm.v
@@ -27,8 +27,8 @@ circuit_list_add=sha.v
 #circuit_list_add=stereovision3.v
 
 # Add architectures to list to sweep
-# arch_list_add=k6_frac_N10_mem32K_40nm_30x30.xml
-arch_list_add=k6_frac_N10_mem32K_40nm.xml
+arch_list_add=k6_frac_N10_mem32K_40nm_30x30.xml
+# arch_list_add=k6_frac_N10_mem32K_40nm.xml
 
 # Parse info and how to parse
 parse_file=routing_ft/parse_routing_ft.txt
