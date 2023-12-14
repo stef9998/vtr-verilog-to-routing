@@ -19,9 +19,7 @@ public class FPGARoutingSim {
         // get file name, read file and instantiate fault rates
         String file = args[0];
         reader.readXML(file);
-        faultRates = new FaultRates(new double[]{Double.parseDouble(args[1]),
-                Double.parseDouble(args[1]) + Double.parseDouble(args[2]),
-                Double.parseDouble(args[1]) + Double.parseDouble(args[2]) + Double.parseDouble(args[3])});
+        faultRates = new FaultRates( new double[]{ Double.parseDouble(args[1]), Double.parseDouble(args[2]), Double.parseDouble(args[3]) } );
 
         System.out.println("Edges read!");
 
