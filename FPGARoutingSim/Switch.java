@@ -1,15 +1,22 @@
 import org.jgrapht.graph.DefaultEdge;
 
+/**
+ * @author Lukas Freiberger
+ * @author Stefan Reichel
+ */
 public class Switch extends DefaultEdge {
     final private MemCell controlCell;  // control cell of the switch/edge
 
-    // Constructor
+    /**
+     * set control Cell
+     */
     public Switch(MemCell controlCell){
-        // set control Cell
         this.controlCell = controlCell;
     }
 
-    // returns cell fault of the contained memCell
+    /**
+     * returns cell fault of the contained memCell
+     */
     public Fault getFault(){
         return controlCell.getCellFault();
     }

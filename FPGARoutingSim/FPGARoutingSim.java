@@ -1,6 +1,10 @@
 import java.util.ArrayList;
 import java.util.HashMap;
 
+/**
+ * @author Lukas Freiberger
+ * @author Stefan Reichel
+ */
 public class FPGARoutingSim {
 
     static ArrayList<MUX> muxes = new ArrayList<>();                    // array list containing the muxes

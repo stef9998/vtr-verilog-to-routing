@@ -1,9 +1,31 @@
+/**
+ * node type of the node in Routing Resource Graph
+ * @author Lukas Freiberger
+ * @author Stefan Reichel
+ */
 public enum RRNodeType {
-    // node type of the node in Routing Resource Graph
-    CHANY,  // y-channel
-    CHANX,  // x-channel
-    SINK,   // sink of a net
-    SOURCE, // source of a net
-    IPIN,   // input pin of a block
-    OPIN    // output pin of a block
+    /**
+     * y-channel
+     */
+    CHANY,
+    /**
+     * x-channel
+     */
+    CHANX,
+    /**
+     * sink of a net
+     */
+    SINK,
+    /**
+     * source of a net
+     */
+    SOURCE,
+    /**
+     * input pin of a block
+     */
+    IPIN,
+    /**
+     * output pin of a block
+     */
+    OPIN
 }

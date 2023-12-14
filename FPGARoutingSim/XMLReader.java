@@ -12,6 +12,10 @@ import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 
+/**
+ * @author Lukas Freiberger
+ * @author Stefan Reichel
+ */
 public class XMLReader{
 
     RREdge[] rrEdges;
@@ -21,14 +25,18 @@ public class XMLReader{
     Document doc;
     NodeList edgeList;
 
-    // parse the xml file
+    /**
+     * parse the xml file
+     */
     private Document parseFile (File file) throws ParserConfigurationException, IOException, SAXException {
         DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
         DocumentBuilder db = docFactory.newDocumentBuilder();
         return db.parse(file);
     }
 
-    // write into the file
+    /**
+     * write into the file
+     */
     private void writeFile (Document doc, File file) throws TransformerException {
         TransformerFactory transFactory = TransformerFactory.newInstance();
         Transformer trans = transFactory.newTransformer();
@@ -37,7 +45,9 @@ public class XMLReader{
         trans.transform(new DOMSource(doc), new StreamResult(file));
     }
 
-    // reading the xml-file
+    /**
+     * reading the xml-file
+     */
     public void readXML(String filename){
         try {
             // parse file to Document
@@ -174,7 +184,9 @@ public class XMLReader{
         }
     }
 
-    // finalize the writing process
+    /**
+     * finalize the writing process
+     */
     public void finalizeWriting(){
         try {
             writeFile(doc, file);
@@ -183,12 +195,16 @@ public class XMLReader{
         }
     }
 
-    // returns the rr edges
+    /**
+     * returns the rr edges
+     */
     public RREdge[] getRrNodes() {
         return rrEdges;
     }
 
-    // returns the switch IDs and the belonging switch types
+    /**
+     * returns the switch IDs and the belonging switch types
+     */
     public HashMap<Integer, SwitchType> getSwitchTypes() {
         return switchTypes;
     }

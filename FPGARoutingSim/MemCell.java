@@ -1,14 +1,22 @@
+/**
+ * Representation for a memory cell.
+ * Calculates the fault of the memory cell with given memristors.
+ * @author Lukas Freiberger
+ * @author Stefan Reichel
+ */
 public class MemCell {
     final private Resistor puRes, pdRes;    // pull-up and pull-down resistor/memristor of the memory cell
 
-    // Constructor
     public MemCell(FaultRates faultRates){
-        // initialize new pull-up and pull-down memristor with faultrate
+        // initialize new pull-up and pull-down memristor with fault-rate
         puRes = new Resistor(faultRates);
         pdRes = new Resistor(faultRates);
     }
 
-    // returns fault contained by the memory cell
+    /**
+     * returns fault contained by the memory cell
+     * @return fault contained by the memory cell
+     */
     public Fault getCellFault(){
         // fault is FF (fault free) in default
         Fault fault = Fault.FF;

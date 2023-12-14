@@ -3,6 +3,9 @@ import org.jgrapht.*;
 import org.jgrapht.alg.shortestpath.AllDirectedPaths;
 import org.jgrapht.graph.SimpleDirectedGraph;
 
+/**
+ * @author Lukas Freiberger
+ */
 public class MUX {
 
     final int switchID, muxSize, blockSize;                                     // Index of sink node, ID of the switch, Number of source nodes, Maximum size of one input block
@@ -497,7 +500,10 @@ public class MUX {
         return blockSize;
     }
 
-    // returns a readable representation of the MUX Graph
+    /**
+     * returns a readable representation of the MUX Graph
+     * @return readable representation of the MUX Graph
+     */
     public String printGraph(){
         StringBuilder out = new StringBuilder();
 
@@ -509,7 +515,10 @@ public class MUX {
         return out.toString();
     }
 
-    // ptints some statistics about the multiplexer
+    /**
+     * prints some statistics about the multiplexer
+     * @return statistics about the multiplexer
+     */
     public String printStats(){
         // general information on MUX
         String out = ("Mux Size: " + muxSize + " Inputs\nSink Node: " + sinkVertex.getVertexID() + "\nSwitch ID: " + switchID);
@@ -525,22 +534,33 @@ public class MUX {
         return out;
     }
 
-    // returns the number of edges
+    /**
+     * returns the number of edges
+     * @return number of edges
+     */
     public int getNumberOfEdges(){
         return muxSize;
     }
 
-    // returns the number of defect edges
+    /**
+     * returns the number of defect edges
+     * @return number of defect edges
+     */
     public int getNumOfDefectEdges(){
         return defectPaths.size();
     }
 
-    // returns the number of mem cells used by the MUX
+    /**
+     * returns the number of mem cells used by the MUX
+     * @return number of mem cells used by the MUX
+     */
     public int getNumberOfMemCells(){
         return (muxSize > blockSize) ? ((muxSize/blockSize) + ((muxSize % blockSize != 0) ? 1 : 0) + blockSize) : muxSize;
     }
 
-    // returns number of the faults SA0, SA1 and UD
+    /**
+     * returns number of the faults SA0, SA1 and UD
+     */
     public int[] getNumberOfFaults(){
         // how much switches contain UD, SA1 or SA0
         int numUD= 0, numSA1 = 0, numSA0 = 0;

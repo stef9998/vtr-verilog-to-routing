@@ -1,7 +1,23 @@
+/**
+ * Fault types of memristors and memory cells
+ * @author Lukas Freiberger
+ * @author Stefan Reichel
+ */
 public enum Fault {
-    // faults of memristors and memory cells
-    FF,     // fault free cell/memristor
-    SA1,    // stuck at one cell/memristor
-    SA0,    // stuck at zero cell/memristor
-    UD      // undefined cell/memristor
+    /**
+     * fault free cell/memristor
+     */
+    FF,
+    /**
+     * stuck at one cell/memristor
+     */
+    SA1,
+    /**
+     * stuck at zero cell/memristor
+     */
+    SA0,
+    /**
+     * undefined cell/memristor
+     */
+    UD
 }
