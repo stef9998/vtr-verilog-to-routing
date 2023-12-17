@@ -15,11 +15,11 @@ public class Resistor {
             fault = Fault.SA0;  // fault is SA0
         }
         // if rnd is between fault-rate of SA0 and SA1
-        else if (rnd < faultRates.getFaultRate(Fault.SA1)){
+        else if (rnd < faultRates.getFaultRate(Fault.SA0) + faultRates.getFaultRate(Fault.SA1)){
             fault = Fault.SA1;  // fault is SA1
         }
         // if rnd is between fault-rate of SA1 and UD
-        else if (rnd < faultRates.getFaultRate(Fault.UD)){
+        else if (rnd < faultRates.getFaultRate(Fault.SA0) + faultRates.getFaultRate(Fault.SA1) + faultRates.getFaultRate(Fault.UD)){
             fault = Fault.UD;   // fault is UD
         } else {
             fault = Fault.FF;   // memristor is fault free
