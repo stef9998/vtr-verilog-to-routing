@@ -5,7 +5,7 @@
  * @author Stefan Reichel
  */
 public class Resistor {
-    final Fault fault;  // fault of resistor/memristor
+    final Fault fault;  // fault of resistor/memristor //TODO make private, if no legacy code is broken afterwards
 
     public Resistor(FaultRates faultRates) {
         double rnd = Math.random() * 100;   // random number between 0 and 100 to select the fault
