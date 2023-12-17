@@ -1,16 +1,15 @@
 /**
  * Representation for a memory cell.
  * Calculates the fault of the memory cell with given memristors.
- * @author Lukas Freiberger
+ * Placeholder Class to use legacy code
  * @author Stefan Reichel
  */
 public class MemCell {
-    final private Resistor puRes, pdRes;    // pull-up and pull-down resistor/memristor of the memory cell
+
+    MemCell2T2R memCell;
 
     public MemCell(FaultRates faultRates){
-        // initialize new pull-up and pull-down memristor with fault-rate
-        puRes = new Resistor(faultRates);
-        pdRes = new Resistor(faultRates);
+        memCell = new MemCell2T2R(faultRates);
     }
 
     /**
@@ -18,52 +17,14 @@ public class MemCell {
      * @return fault contained by the memory cell
      */
     public Fault getCellFault(){
-        // fault is FF (fault free) in default
-        Fault fault = Fault.FF;
-
-        // if pull-up memristor contains fault and pull-down memristor contains no fault
-        if(puRes.contFault() && !pdRes.contFault()){
-            // check the fault of pull-up memristor
-            switch (puRes.getFault()){
-                case SA1: fault = Fault.SA1; break;     // in case puRes contains SA1 memory cell is SA1
-                case SA0: fault = Fault.SA0; break;     // in case puRes contains SA0 memory cell is SA0
-                case UD: fault = Fault.UD;              // in case puRes contains UD memory cell is UD
-            }
-        }
-        // else if pull-down memristor contains fault and pull-up memristor contains no fault
-        else if(!puRes.contFault() && pdRes.contFault()){
-            // check the fault of pull-down memristor
-            switch (pdRes.getFault()){
-                case SA1: fault = Fault.SA0; break;     // in case pdRes contains SA1 memory cell is SA0
-                case SA0: fault = Fault.SA1; break;     // in case pdRes contains SA0 memory cell is SA1
-                case UD: fault = Fault.UD;              // in case pdRes contains UD memory cell is UD
-            }
-        }
-        // else if both contain fault
-        else if(puRes.contFault() && pdRes.contFault()){
-            // if both contain the same fault
-            if(puRes.getFault() == pdRes.getFault()){
-                fault = Fault.UD;                       // memory cell is UD
-            }
-            // else if one of the both or both contain a UD-Fault
-            else if(puRes.getFault() == Fault.UD || pdRes.getFault() == Fault.UD){
-                fault = Fault.UD;                       // memory cell is UD
-            }
-            // else if both contain a different fault and there is no UD in memristors
-            else{
-                fault = puRes.getFault();               // memory cell is the same as the fault of puRes
-            }
-        }
-
-        // return the fault of the memory cell
-        return fault;
+        return memCell.getCellFault();
     }
 
     public boolean puResContFault(){
-        return puRes.contFault();
+        return memCell.puResContFault();
     }
 
     public boolean pdResContFault(){
-        return pdRes.contFault();
+        return memCell.pdResContFault();
     }
 }
