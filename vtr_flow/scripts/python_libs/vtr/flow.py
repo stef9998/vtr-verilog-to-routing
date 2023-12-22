@@ -322,7 +322,7 @@ def run(
             )
 
             # delete argument "write_rr_graph" from list
-            if "wirte_rr_graph" in vpr_args:
+            if "write_rr_graph" in vpr_args:
                 vpr_args.move_to_end("write_rr_graph")
                 vpr_args.popitem()
 
