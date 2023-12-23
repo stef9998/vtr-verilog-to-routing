@@ -74,7 +74,9 @@ public class XMLReader{
             }
 
             // save the rest of the edges while sort them by sink node ID with insertion sort
-            for (int i = 1; i < edgeList.getLength(); i++) {
+//            for (int i = 1; i < edgeList.getLength(); i++) {
+            int edgeListLength = edgeList.getLength();
+            for (int i = 1; i < edgeListLength; i++) {
                 Node node = edgeList.item(i);
                 if (node.getNodeType() == Node.ELEMENT_NODE) {
                     Element element = (Element) node;
@@ -108,7 +110,9 @@ public class XMLReader{
             RRNodeType[] RRNodeTypes = new RRNodeType[nodeList.getLength()];
 
             // Iterate over node elements
-            for (int i = 0; i < nodeList.getLength(); i++){
+//            for (int i = 0; i < nodeList.getLength(); i++){
+            int nodeListLength = nodeList.getLength();
+            for (int i = 0; i < nodeListLength; i++){
                 Node node = nodeList.item(i);
 
                 if(node.getNodeType() == Node.ELEMENT_NODE) {

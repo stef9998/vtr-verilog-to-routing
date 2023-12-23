@@ -744,8 +744,8 @@ Routing Resource Graph File Format (.xml)
 -----------------------------------------
 The routing resource graph (rr graph) file is an XML file that describes the routing resources within the FPGA.
 VPR can generate a rr graph that matches your architecture specifications (from the architecture xml file), or it can read in an externally generated rr graph.
-When this file is written by VPR, the rr graph written out is the rr graph generated before routing with a final channel width 
-(even if multiple routings at different channel widths are performed during a binary search for the minimum channel width). 
+When this file is written by VPR, the rr graph written out is the rr graph generated before routing with a final channel width
+(even if multiple routings at different channel widths are performed during a binary search for the minimum channel width).
 When reading in rr graph from an external file, the rr graph is used during both the placement and routing phases of VPR.
 The file is constructed using tags. The top level is the ``rr_graph`` tag.
 This tag contains all the channel, switches, segments, block, grid, node, and edge information of the FPGA.
@@ -758,7 +758,7 @@ Each of these sections are separated into separate tags as described below.
 Top Level Tags
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The first tag in all rr graph files is the ``<rr_graph>`` tag that contains detailed subtags for each catagory in the rr graph.
+The first tag in all rr graph files is the ``<rr_graph>`` tag that contains detailed subtags for each category in the rr graph.
 Each tag has their subsequent subtags that describes one entity. For example, ``<segments>`` includes all the segments in the graph where each ``<segment>`` tag outlines one type of segment.
 
 The ``rr_graph`` tag contains the following tags:
@@ -1095,7 +1095,7 @@ The first tag in all NoC traffic flow files is the ``<traffic_flows>`` tag that 
 The ``traffic_flows`` tag contains the following tags:
 
 * ``<single_flow>``
-        * ``<single_flow>``content``</single_flow>`` 
+        * ``<single_flow>``content``</single_flow>``
 
 Detailed Tag Information
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1130,7 +1130,7 @@ A given traffic flow information is contained within the ``single_flow`` tag. Th
         ”noc_router_adapter_block:noc_router_layer1_mvm2:slave_tready_reg0” user could pro-
         vide ”.*noc_router_layer1_mvm2.*”. This allows users to provide the instance name for a given logical router
         module in the design. This is a required attribute.
-    
+
     :req_param dst:
         A string which represents a logical router name in an application.
         This logical router is the deastination endpoint for the traffic flow being described by the cor-
