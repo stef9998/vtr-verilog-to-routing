@@ -37,7 +37,8 @@ vpr_path = root_path / "vpr"
 vpr_exe_path = vpr_path / "vpr"
 
 # Routing fault sim paths
-routing_ft_jar_path = root_path / "FPGARoutingSim" / "FPGARoutingSim.jar"
+# routing_ft_jar_path = root_path / "FPGARoutingSim" / "FPGARoutingSim.jar"
+routing_ft_jar_path = root_path / "out" / "artifacts" / "FPGARoutingSim_jar" / "FPGARoutingSim.jar"
 
 # Flow scripts
 scripts_path = vtr_flow_path / "scripts"
