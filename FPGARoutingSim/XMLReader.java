@@ -175,7 +175,7 @@ public class XMLReader{
 
         // delete the defect edges in the sorted array from the document
         for (int[] defectEdge: defectEdges){
-            Node node = edgeList.item(defectEdge[2]);
+            Node node = edgeList.item(defectEdge[2]); //TODO this takes a lot of calculation time
 
             if (node.getNodeType() == Node.ELEMENT_NODE){
                 Element element = (Element) node;
