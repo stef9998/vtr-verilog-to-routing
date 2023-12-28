@@ -6,7 +6,7 @@ import org.jgrapht.graph.SimpleDirectedGraph;
 /**
  * @author Lukas Freiberger
  */
-public class MUX {
+public class MUXLucas {
 
     final int switchID, muxSize, blockSize;                                     // Index of sink node, ID of the switch, Number of source nodes, Maximum size of one input block
     final HashMap<Integer, RRNodeType> srcNodeTypes = new HashMap<>();          // Hash Map with Source Node Types
@@ -21,7 +21,7 @@ public class MUX {
     ArrayList<GraphPath<Vertex, Switch>> defectPaths = new ArrayList<>();       // array list of defect paths/edges in the mux
 
     // Constructor
-    public MUX(ArrayList<RREdge> rrEdges, FaultRates faultRates){
+    public MUXLucas(ArrayList<RREdge> rrEdges, FaultRates faultRates){
         // Set switchID, muxSize and maxBlockSize
         this.switchID = rrEdges.get(0).getSwitchID();
         this.muxSize = rrEdges.size();

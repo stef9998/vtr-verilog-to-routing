@@ -7,7 +7,7 @@ import java.util.HashMap;
  */
 public class FPGARoutingSim {
 
-    static ArrayList<MUX> muxes = new ArrayList<>();                    // array list containing the muxes
+    static ArrayList<MUXLucas> muxesLucas = new ArrayList<>();                    // array list containing the muxes
     static ArrayList<int[]> defectEdges = new ArrayList<>();            // array list containing the defect edges
     static int[][] deleteList;                                          // array containing the delete list with defect edges
     static XMLReader reader = new XMLReader();                          // object of class XMLReader
@@ -27,32 +27,32 @@ public class FPGARoutingSim {
 
         System.out.println("Edges read!");
 
-        // fill ArrayList<MUX> muxes with multiplexers
+        // fill ArrayList<MUXLucas> muxes with multiplexers
         fillMuxArray();
 
         System.out.println("MUX Array filled!");
 
         // for every mux in array list of muxes
-        for (MUX mux: muxes){
+        for (MUXLucas muxLucas: muxesLucas){
             // calculate muxes usability and add defect paths to defect edges
-            mux.calculateUsability();
-            defectEdges.addAll(mux.getRREdgeDeleteList());
+            muxLucas.calculateUsability();
+            defectEdges.addAll(muxLucas.getRREdgeDeleteList());
 
             // increase the overall number of edges, defect edges and memory cells
-            numOfEdges += mux.getNumberOfEdges();
-            numOfDefectEdges += mux.getNumOfDefectEdges();
-            numOfMemCells += mux.getNumberOfMemCells();
-            numOfFaultyMemristors += mux.getNumberOfFaultyMemristors();
+            numOfEdges += muxLucas.getNumberOfEdges();
+            numOfDefectEdges += muxLucas.getNumOfDefectEdges();
+            numOfMemCells += muxLucas.getNumberOfMemCells();
+            numOfFaultyMemristors += muxLucas.getNumberOfFaultyMemristors();
 
             // increase the overall number of SA0, SA1 and UD
-            faults = mux.getNumberOfFaults();
+            faults = muxLucas.getNumberOfFaults();
             for (int i = 0; i < faults.length; i++){
                 numOfFaults[i] += faults[i];
             }
 
             // append the graph and stats of every mux to the output of the program
-            output.append(mux.printStats());
-            output.append(mux.printGraph());
+            output.append(muxLucas.printStats());
+            output.append(muxLucas.printGraph());
             output.append("--------------------------------------------------------------------------------------------\n");
         }
 
@@ -83,7 +83,7 @@ public class FPGARoutingSim {
 
         // add some overall output data
         output.append("FPGARoutingSim ran successfully!\n");
-        output.append("It has ").append(muxes.size()).append(" Multiplexers\n");
+        output.append("It has ").append(muxesLucas.size()).append(" Multiplexers\n");
         output.append("Number of configurable Edges in FPGA: ").append(numOfEdges).append("\n");
         output.append("Number of defect Edges in FPGA after Fault Sim: ").append(numOfDefectEdges).append("\n");
         output.append("Number of Memory Cells to set the Edges in FPGA: ").append(numOfMemCells).append("\n");
@@ -116,7 +116,7 @@ public class FPGARoutingSim {
                 // If Array List does not contain Nodes of RRNodeType SOURCE and those with Sink RRNodeType SINK
                 if (muxSrcNodes.get(0).getNodeType() != RRNodeType.SOURCE && muxSrcNodes.get(0).getSinkNodeType() != RRNodeType.SINK
                         && switchTypes.get(muxSrcNodes.get(0).getSwitchID()) == SwitchType.mux) {
-                    muxes.add(new MUX(muxSrcNodes, faultRates));    // Add new MUX
+                    muxesLucas.add(new MUXLucas(muxSrcNodes, faultRates));    // Add new MUX
                 }
                 // Clear the List of MUX Source Nodes
                 muxSrcNodes.clear();
