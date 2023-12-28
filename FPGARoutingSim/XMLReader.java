@@ -64,44 +64,23 @@ public class XMLReader{
             edgeList = doc.getElementsByTagName("edge");
             edges = new int[edgeList.getLength()][4];
 
-            // read first edge and save it in array of edges (save also the index in edgeList) //TODO also only needed because of insertion sort I think
-            Node frstEdge = edgeList.item(0);
-            if (frstEdge.getNodeType() == Node.ELEMENT_NODE) {
-                Element firstElem = (Element) frstEdge;
-                edges[0] = new int[]{Integer.parseInt(firstElem.getAttribute("src_node")),
-                        Integer.parseInt(firstElem.getAttribute("sink_node")),
-                        Integer.parseInt(firstElem.getAttribute("switch_id")),
-                        0
-                };
-            }
 
-            // save the rest of the edges while sort them by sink node ID with insertion sort
+            // save the edges
 //            for (int i = 1; i < edgeList.getLength(); i++) {
             int edgeListLength = edgeList.getLength();
-            for (int i = 1; i < edgeListLength; i++) {
+            for (int i = 0; i < edgeListLength; i++) {
                 Node node = edgeList.item(i);
                 if (node.getNodeType() == Node.ELEMENT_NODE) {
                     Element element = (Element) node;
-
-                    // get edge's attributes
-                    int[] newEdge = new int[]{Integer.parseInt(element.getAttribute("src_node")),
+                    edges[i] = new int[]{Integer.parseInt(element.getAttribute("src_node")),
                             Integer.parseInt(element.getAttribute("sink_node")),
                             Integer.parseInt(element.getAttribute("switch_id")),
-                            i //TODO might only be used for insertion sort and might be removable when sorting is done different
+                            i //TODO index i might only be used for insertion sort and might be removable when sorting is done different
                     };
-
-                    // check array if there is an edge with the sink node id bigger than the sink node id of new edge
-                    int j = i;
-//                    while (j > 0 && edges[j-1][1] > newEdge[1]){
-//                        edges[j] = edges[j-1]; //TODO takes 33% of time of method with 15x15. Needs to be checked
-//                        j--;
-//                    }
-
-                    // save new edge
-                    edges[j] = newEdge;
                 }
             }
 
+            // sort the array by sink-node ID
 //            Arrays.sort(edges, Comparator.comparingInt(a -> a[1]));
             Arrays.parallelSort(edges, Comparator.comparingInt(a -> a[1]));
 
