@@ -169,6 +169,11 @@ public class XMLReader{
     }
 
     public void writeXML(int[][] defectEdges){
+        /*TODO
+            might be faster to just iterate through document and then delete corresponding edges/nodes.
+            Probably create a Hashmap in the end which saves which edges/nodes needs to be deleted (maybe with boolean).
+            And then in the iteration here it just deletes them in one go when Hashmap says so.
+         */
 
         Node rrEdges = doc.getElementsByTagName("rr_edges").item(0);
         int sinkNode, srcNode;
