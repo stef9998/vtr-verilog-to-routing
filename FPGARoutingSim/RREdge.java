@@ -14,6 +14,14 @@ public class RREdge {
         this.nodeType = nodeType;
         this.sinkNodeType = sinkNodeType;
     }
+    public RREdge(int[] ids, RRNodeType[] RRNodeTypes){
+        // set IDs
+        this.ids = ids;
+
+        // set node types
+        this.nodeType = RRNodeTypes[ids[0]];
+        this.sinkNodeType = RRNodeTypes[ids[1]];
+    }
 
     /**
      * returns node ID of RREdge
@@ -23,7 +31,7 @@ public class RREdge {
     }
 
     /**
-     * returns sink Node of the RREdge
+     * returns sink Node ID of the RREdge
      */
     public int getSinkNodeID() {
         return ids[1];

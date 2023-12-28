@@ -115,8 +115,10 @@ public class XMLReader{
 
             // fill array with RREdges and save information on node type
             for(int i = 0; i < edges.length; i++){
-                    rrEdges[i] = new RREdge(edges[i], RRNodeTypes[edges[i][0]], RRNodeTypes[edges[i][1]]);
+//                    rrEdges[i] = new RREdge(edges[i], RRNodeTypes[edges[i][0]], RRNodeTypes[edges[i][1]]);
+                    rrEdges[i] = new RREdge(edges[i], RRNodeTypes);
             }
+
 
 
             /*
