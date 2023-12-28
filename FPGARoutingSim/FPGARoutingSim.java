@@ -1,4 +1,6 @@
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
 
 /**
@@ -8,6 +10,7 @@ import java.util.HashMap;
 public class FPGARoutingSim {
 
     static ArrayList<MUXLucas> muxesLucas = new ArrayList<>();                    // array list containing the muxes
+    static ArrayList<MUXLucas> muxesLucas = new ArrayList<>();          // array list containing the muxes
     static ArrayList<int[]> defectEdges = new ArrayList<>();            // array list containing the defect edges
     static int[][] deleteList;                                          // array containing the delete list with defect edges
     static XMLReader reader = new XMLReader();                          // object of class XMLReader
@@ -58,20 +61,12 @@ public class FPGARoutingSim {
 
         System.out.println("MUX Usabilities calculated!");
 
-        // sort defect edges by RRGraph Index (decreasing)
-        deleteList = new int[defectEdges.size()][3];
-        if (!defectEdges.isEmpty()) {
-            deleteList[0] = defectEdges.get(0);
-            for (int i = 1; i < defectEdges.size(); i++) {
-                int[] newDefectEdge = defectEdges.get(i);
-                int j = i;
-                while (j > 0 && deleteList[j - 1][2] < newDefectEdge[2]) {
-                    deleteList[j] = deleteList[j - 1];
-                    j--;
-                }
-                deleteList[j] = newDefectEdge;
-            }
-        }
+        // List to Array //TODO might be possible to remove zwischenstep
+        deleteList = defectEdges.toArray(new int[defectEdges.size()][3]);
+
+        // Sort defect edges by RRGraph Index (the third element) in descending order
+        Arrays.sort(deleteList, Comparator.comparingInt((int[] a) -> a[2]).reversed());
+//        Arrays.parallelSort(deleteList, Comparator.comparingInt((int[] a) -> a[2]).reversed());
 
         System.out.println("Defect Edges sorted!");
 
