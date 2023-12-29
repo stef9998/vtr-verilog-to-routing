@@ -1,6 +1,4 @@
-import org.jgrapht.Graph;
 import org.jgrapht.GraphPath;
-import org.jgrapht.graph.SimpleDirectedGraph;
 
 import java.util.*;
 
@@ -193,6 +191,24 @@ public class MUXStefan {
         }
         return edges;
     }
+
+    public Set<RREdge> getDefectRREdges() {
+        return defectRREdges;
+        //TODO maybe do directly the int[][] needed for XML Writer
+        // or maybe make another new method
+
+    }
+
+    public List<int[]> getDefectRREdgesList() {
+        List<int[]> edges = new ArrayList<>();
+        int i = 0;
+        for (RREdge edge : defectRREdges) {
+            edges.add(i, XMLReader.convertRREdgeForXMLWrite(edge));
+            i++;
+        }
+        return edges;
+    }
+
 
     // calculates the block size such that number of mem cells is minimal
     private int calcBlockSize(){
