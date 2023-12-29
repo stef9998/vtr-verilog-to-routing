@@ -56,30 +56,15 @@ public class MUXStefan {
             List<List<RREdge>> firstStageNeighborhoods = ListSplitter.splitList(rrEdges, blockSize);
             int secondStageInDegree = firstStageNeighborhoods.size();
             List<Switch> secondStageSwitches = new ArrayList<>();
-            List<Fault> secondStageFaults = new ArrayList<>();
+            List<Fault> secondStageFaults = new ArrayList<>(); //TODO needed?
 
             inNeighborhoodFaultStatusVariables secondStageNeighborhood = new inNeighborhoodFaultStatusVariables();
 
             for (int i = 0; i < secondStageInDegree; i++) {
                 secondStageSwitches.add(i, new Switch(new MemCell4T1R(faultRates)));
+                secondStageFaults.add(i, secondStageSwitches.get(i).getFault());
             }
-            for (int i = 0; i < secondStageInDegree; i++) {
-                Fault memCellFault = secondStageSwitches.get(i).getFault();
-                secondStageFaults.add(i, memCellFault);
-
-                switch (memCellFault) {
-                    case UD:
-                        secondStageNeighborhood.stageHasUD = true;
-                        break;
-                    case SA0:
-                        break;
-                    case SA1:
-                        secondStageNeighborhood.stageNoOfSA1++;
-                        break;
-                    case FF:
-                        break;
-                }
-            }
+            inNeigborhoodStatusVariablesCalc(secondStageInDegree, secondStageSwitches, secondStageNeighborhood);
 
 
             // UD in second stage or more than one SA1 in second stage
@@ -118,20 +103,53 @@ public class MUXStefan {
         } //else //TODO one stage
     }
 
-    private boolean calculateFirstStageDefects(List<RREdge> rrEdges, Fault secondStageFault){
-        List<Fault> memCellfaults = new ArrayList<>();
+    private inNeighborhoodFaultStatusVariables calculateFirstStageDefects(List<RREdge> rrEdges, Fault secondStageFault){
+        List<Fault> memCellfaults = new ArrayList<>(); //TODO needed?
         List<Switch> switches = new ArrayList<>();
-
         int inDegree = rrEdges.size();
-
         inNeighborhoodFaultStatusVariables faultVariables = new inNeighborhoodFaultStatusVariables();
 
         for (int i = 0; i < inDegree; i++) {
             switches.add(i, new Switch(new MemCell4T1R(faultRates)));
+            memCellfaults.add(i, switches.get(i).getFault());
         }
+        inNeigborhoodStatusVariablesCalc(inDegree, switches, faultVariables);
+
+        // UD or more than one SA1
+        if (faultVariables.stageHasUD || (faultVariables.stageNoOfSA1 > 1)){
+            if (secondStageFault == Fault.SA1) {
+                defectRREdges.addAll(rrEdges);
+                //TODO adjustment if second stage SA1 calc is changed
+                // as we need to remove every node of complete MUX, because UD + SA1
+            } else if (secondStageFault == Fault.FF) {
+                defectRREdges.addAll(rrEdges);
+            }
+        }
+        // one SA1
+        else if (faultVariables.stageNoOfSA1 == 1){
+            // remove everything except the SA1
+            for (int i = 0; i < inDegree; i++) {
+                Fault memCellFault = memCellfaults.get(i);
+                if (memCellFault != Fault.SA1){
+                    defectRREdges.add(rrEdges.get(i));
+                }
+            }
+        }
+        // no UD or SA1
+        else {
+            for (int i = 0; i < inDegree; i++) {
+                Fault memCellFault = memCellfaults.get(i);
+                if (memCellFault == Fault.SA0) {
+                    defectRREdges.add(rrEdges.get(i));
+                }
+            }
+        }
+        return faultVariables;
+    }
+
+    private static void inNeigborhoodStatusVariablesCalc(int inDegree, List<Switch> switches, inNeighborhoodFaultStatusVariables faultVariables) {
         for (int i = 0; i < inDegree; i++) {
             Fault memCellFault = switches.get(i).getFault();
-            memCellfaults.add(i, memCellFault);
 
             switch (memCellFault) {
                 case UD:
@@ -147,32 +165,6 @@ public class MUXStefan {
             }
 
         }
-
-        tree_it: for (int i = 0; i < inDegree; i++) {
-            Fault memCellFault = memCellfaults.get(i);
-
-            switch (memCellFault) { //TODO
-                case UD:
-                    if (secondStageFault == Fault.SA1) {
-                        defectRREdges.addAll(rrEdges);
-                        //TODO adjustment if second stage SA1 calc is changed
-                        // as we need to remove every node of complete MUX, because UD + SA1
-                    } else if (secondStageFault == Fault.FF) {
-                        defectRREdges.addAll(rrEdges);
-                    }
-                    break tree_it;
-                case SA0:
-                    defectRREdges.add(rrEdges.get(i));
-                    break;
-                case SA1:
-                    //TODO
-                    break;
-                case FF:
-                    break;
-            }
-        }
-
-        return false; //TODO give function or make void
     }
 
     private static class inNeighborhoodFaultStatusVariables {
