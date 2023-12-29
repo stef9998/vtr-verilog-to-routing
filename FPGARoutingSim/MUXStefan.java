@@ -50,55 +50,52 @@ public class MUXStefan {
     }
 
     public void calculateUsability(ArrayList<RREdge> rrEdges){ //TODO maybe private
-        if (hasMultipleStages()){
-            List<List<RREdge>> firstStageNeighborhoods = ListSplitter.splitList(rrEdges, blockSize);
-            int secondStageInDegree = firstStageNeighborhoods.size();
-            List<Switch> secondStageSwitches = new ArrayList<>();
-            List<Fault> secondStageFaults = new ArrayList<>(); //TODO needed?
+        List<List<RREdge>> firstStageNeighborhoods = ListSplitter.splitList(rrEdges, blockSize);
+        int secondStageInDegree = firstStageNeighborhoods.size();
+        List<Switch> secondStageSwitches = new ArrayList<>();
+        List<Fault> secondStageFaults = new ArrayList<>(); //TODO needed?
 
-            inNeighborhoodFaultStatusVariables secondStageNeighborhood = new inNeighborhoodFaultStatusVariables();
+        inNeighborhoodFaultStatusVariables secondStageNeighborhood = new inNeighborhoodFaultStatusVariables();
 
+        for (int i = 0; i < secondStageInDegree; i++) {
+            secondStageSwitches.add(i, new Switch(new MemCell4T1R(faultRates)));
+            secondStageFaults.add(i, secondStageSwitches.get(i).getFault());
+        }
+        inNeigborhoodStatusVariablesCalc(secondStageInDegree, secondStageSwitches, secondStageNeighborhood);
+
+
+        // UD in second stage or more than one SA1 in second stage
+        if (secondStageNeighborhood.stageHasUD || (secondStageNeighborhood.stageNoOfSA1 > 1)){
+            // remove everything //TODO maybe change to other possible fix (first stage all 0)
             for (int i = 0; i < secondStageInDegree; i++) {
-                secondStageSwitches.add(i, new Switch(new MemCell4T1R(faultRates)));
-                secondStageFaults.add(i, secondStageSwitches.get(i).getFault());
+                defectRREdges.addAll(firstStageNeighborhoods.get(i));
             }
-            inNeigborhoodStatusVariablesCalc(secondStageInDegree, secondStageSwitches, secondStageNeighborhood);
-
-
-            // UD in second stage or more than one SA1 in second stage
-            if (secondStageNeighborhood.stageHasUD || (secondStageNeighborhood.stageNoOfSA1 > 1)){
-                // remove everything //TODO maybe change to other possible fix (first stage all 0)
-                for (int i = 0; i < secondStageInDegree; i++) {
-                    defectRREdges.addAll(firstStageNeighborhoods.get(i));
+        }
+        // one SA1 in second stage
+        else if (secondStageNeighborhood.stageNoOfSA1 == 1){ //TODO merge into above if other possible fix works
+            // remove everything except the one SA1 path
+            for (int i = 0; i < secondStageInDegree; i++) {
+                List<RREdge> firstStageTree = firstStageNeighborhoods.get(i);
+                Fault memCellFault = secondStageFaults.get(i);
+                if (memCellFault == Fault.SA1){
+                    calculateFirstStageDefects(firstStageTree, memCellFault);
+                } else {
+                    defectRREdges.addAll(firstStageTree);
                 }
             }
-            // one SA1 in second stage
-            else if (secondStageNeighborhood.stageNoOfSA1 == 1){ //TODO merge into above if other possible fix works
-                // remove everything except the one SA1 path
-                for (int i = 0; i < secondStageInDegree; i++) {
-                    List<RREdge> firstStageTree = firstStageNeighborhoods.get(i);
-                    Fault memCellFault = secondStageFaults.get(i);
-                    if (memCellFault == Fault.SA1){
-                        calculateFirstStageDefects(firstStageTree, memCellFault);
-                    } else {
-                        defectRREdges.addAll(firstStageTree);
-                    }
+        }
+        // no UD or SA1 in second stage
+        else {
+            for (int i = 0; i < secondStageInDegree; i++) {
+                List<RREdge> firstStageTree = firstStageNeighborhoods.get(i);
+                Fault memCellFault = secondStageFaults.get(i);
+                if (memCellFault == Fault.SA0) {
+                    defectRREdges.addAll(firstStageTree);
+                } else {
+                    calculateFirstStageDefects(firstStageTree, memCellFault);
                 }
             }
-            // no UD or SA1 in second stage
-            else {
-                for (int i = 0; i < secondStageInDegree; i++) {
-                    List<RREdge> firstStageTree = firstStageNeighborhoods.get(i);
-                    Fault memCellFault = secondStageFaults.get(i);
-                    if (memCellFault == Fault.SA0) {
-                        defectRREdges.addAll(firstStageTree);
-                    } else {
-                        calculateFirstStageDefects(firstStageTree, memCellFault);
-                    }
-                }
-            }
-
-        } //else //TODO one stage
+        }
     }
 
     private inNeighborhoodFaultStatusVariables calculateFirstStageDefects(List<RREdge> rrEdges, Fault secondStageFault){
