@@ -17,6 +17,7 @@ public class MemCell2T2R implements MemCell{
      * returns fault contained by the memory cell
      * @return fault contained by the memory cell
      */
+    @Override
     public Fault getCellFault(){
         // fault is FF (fault free) in default
         Fault fault = Fault.FF;

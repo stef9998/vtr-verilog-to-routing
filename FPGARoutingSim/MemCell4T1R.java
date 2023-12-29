@@ -16,6 +16,7 @@ public class MemCell4T1R implements MemCell{
      * returns fault contained by the memory cell
      * @return fault contained by the memory cell
      */
+    @Override
     public Fault getCellFault(){
         return mem1.getFault();
     }
