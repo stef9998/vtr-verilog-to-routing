@@ -3,7 +3,7 @@
  * Calculates the fault of the memory cell with given memristors.
  * @author Stefan Reichel
  */
-public class MemCell4T1R {
+public class MemCell4T1R implements MemCell{
 
     final private Resistor mem1;    // pull-up and pull-down resistor/memristor of the memory cell
 

@@ -58,7 +58,7 @@ public class MUXLucas {
         // fill the array with Nodes and Switches and add them to the graph
         for (int j = 0; j < intVertices.length; j++){
             intVertices[j] = new Vertex(j, VertexType.INTERNODE, -1);
-            scndStageSwitches[j] = new Switch(new MemCell(faultRates));
+            scndStageSwitches[j] = new Switch(new MemCell2T2R(faultRates));
             muxGraph.addVertex(intVertices[j]);
             muxGraph.addEdge(intVertices[j], sinkVertex, scndStageSwitches[j]);
         }
@@ -67,7 +67,7 @@ public class MUXLucas {
         MemCell[] frstStageCells = new MemCell[Math.min(muxSize, blockSize)];
         // fill the array with MemCells
         for (int cellIndex = 0; cellIndex < frstStageCells.length; cellIndex ++){
-            frstStageCells[cellIndex] = new MemCell(faultRates);
+            frstStageCells[cellIndex] = new MemCell2T2R(faultRates);
         }
 
         // Instantiate an array of Switches to represent the edges between the inter and the source nodes
@@ -614,20 +614,20 @@ public class MUXLucas {
         if(muxSize > blockSize) {
             // count number of faults in first stage
             for (int i = 0; i < blockSize; i++) {
-                if (frstStageSwitches[i].getControlCell().puResContFault()) {
+                if (((MemCell2T2R) frstStageSwitches[i].getControlCell()).puResContFault()) {
                     numFault++;
                 }
-                if (frstStageSwitches[i].getControlCell().pdResContFault()) {
+                if (((MemCell2T2R) frstStageSwitches[i].getControlCell()).pdResContFault()) {
                     numFault++;
                 }
             }
 
             // count number of faults in second stage
             for (Switch scndStageSwitch : scndStageSwitches) {
-                if (scndStageSwitch.getControlCell().puResContFault()) {
+                if (((MemCell2T2R) scndStageSwitch.getControlCell()).puResContFault()) {
                     numFault++;
                 }
-                if (scndStageSwitch.getControlCell().pdResContFault()) {
+                if (((MemCell2T2R) scndStageSwitch.getControlCell()).pdResContFault()) {
                     numFault++;
                 }
             }
@@ -636,10 +636,10 @@ public class MUXLucas {
         else {
             // count number of faults in first stage
             for (Switch frstStageSwitch : frstStageSwitches) {
-                if (frstStageSwitch.getControlCell().puResContFault()) {
+                if (((MemCell2T2R) frstStageSwitch.getControlCell()).puResContFault()) {
                     numFault++;
                 }
-                if (frstStageSwitch.getControlCell().pdResContFault()) {
+                if (((MemCell2T2R) frstStageSwitch.getControlCell()).pdResContFault()) {
                     numFault++;
                 }
             }

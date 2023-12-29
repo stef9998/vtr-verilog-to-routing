@@ -4,7 +4,7 @@
  * @author Lukas Freiberger
  * @author Stefan Reichel
  */
-public class MemCell2T2R {
+public class MemCell2T2R implements MemCell{
     final private Resistor puRes, pdRes;    // pull-up and pull-down resistor/memristor of the memory cell
 
     public MemCell2T2R(FaultRates faultRates){
