@@ -53,18 +53,18 @@ public class MUXStefan {
 
     public void calculateUsability(ArrayList<RREdge> rrEdges){ //TODO maybe private
         if (hasMultipleStages()){
-            List<List<RREdge>> firstStageTrees = ListSplitter.splitList(rrEdges, blockSize);
-            int firstStageTreesNumberOf = firstStageTrees.size();
-            List<MemCell4T1R> secondStageMemCells = new ArrayList<>();
+            List<List<RREdge>> firstStageNeighborhoods = ListSplitter.splitList(rrEdges, blockSize);
+            int secondStageInDegree = firstStageNeighborhoods.size();
+            List<Switch> secondStageSwitches = new ArrayList<>();
             List<Fault> secondStageFaults = new ArrayList<>();
 
             inNeighborhoodFaultStatusVariables secondStageNeighborhood = new inNeighborhoodFaultStatusVariables();
 
-            for (int i = 0; i < firstStageTreesNumberOf; i++) {
-                MemCell4T1R memCell = new MemCell4T1R(faultRates);
-                secondStageMemCells.add(i, memCell);
-
-                Fault memCellFault = memCell.getCellFault();
+            for (int i = 0; i < secondStageInDegree; i++) {
+                secondStageSwitches.add(i, new Switch(new MemCell4T1R(faultRates)));
+            }
+            for (int i = 0; i < secondStageInDegree; i++) {
+                Fault memCellFault = secondStageSwitches.get(i).getFault();
                 secondStageFaults.add(i, memCellFault);
 
                 switch (memCellFault) {
@@ -85,15 +85,15 @@ public class MUXStefan {
             // UD in second stage or more than one SA1 in second stage
             if (secondStageNeighborhood.stageHasUD || (secondStageNeighborhood.stageNoOfSA1 > 1)){
                 // remove everything //TODO maybe change to other possible fix (first stage all 0)
-                for (int i = 0; i < firstStageTreesNumberOf; i++) {
-                    defectRREdges.addAll(firstStageTrees.get(i));
+                for (int i = 0; i < secondStageInDegree; i++) {
+                    defectRREdges.addAll(firstStageNeighborhoods.get(i));
                 }
             }
             // one SA1 in second stage
             else if (secondStageNeighborhood.stageNoOfSA1 == 1){ //TODO merge into above if other possible fix works
                 // remove everything except the one SA1 path
-                for (int i = 0; i < firstStageTreesNumberOf; i++) {
-                    List<RREdge> firstStageTree = firstStageTrees.get(i);
+                for (int i = 0; i < secondStageInDegree; i++) {
+                    List<RREdge> firstStageTree = firstStageNeighborhoods.get(i);
                     Fault memCellFault = secondStageFaults.get(i);
                     if (memCellFault == Fault.SA1){
                         calculateFirstStageDefects(firstStageTree, memCellFault);
@@ -104,8 +104,8 @@ public class MUXStefan {
             }
             // no UD or SA1 in second stage
             else {
-                for (int i = 0; i < firstStageTreesNumberOf; i++) { //TODO rename loop
-                    List<RREdge> firstStageTree = firstStageTrees.get(i);
+                for (int i = 0; i < secondStageInDegree; i++) {
+                    List<RREdge> firstStageTree = firstStageNeighborhoods.get(i);
                     Fault memCellFault = secondStageFaults.get(i);
                     if (memCellFault == Fault.SA0) {
                         defectRREdges.addAll(firstStageTree);
@@ -119,17 +119,37 @@ public class MUXStefan {
     }
 
     private boolean calculateFirstStageDefects(List<RREdge> rrEdges, Fault secondStageFault){
-        List<Fault> faults = new ArrayList<>();
-        List<MemCell4T1R> memCells = new ArrayList<>();
+        List<Fault> memCellfaults = new ArrayList<>();
+        List<Switch> switches = new ArrayList<>();
 
         int inDegree = rrEdges.size();
 
-        tree_it: for (int i = 0; i < inDegree; i++) {
-            MemCell4T1R memCell = new MemCell4T1R(faultRates);
-            memCells.add(i, memCell);
+        inNeighborhoodFaultStatusVariables faultVariables = new inNeighborhoodFaultStatusVariables();
 
-            Fault memCellFault = memCell.getCellFault();
-            faults.add(i, memCellFault);
+        for (int i = 0; i < inDegree; i++) {
+            switches.add(i, new Switch(new MemCell4T1R(faultRates)));
+        }
+        for (int i = 0; i < inDegree; i++) {
+            Fault memCellFault = switches.get(i).getFault();
+            memCellfaults.add(i, memCellFault);
+
+            switch (memCellFault) {
+                case UD:
+                    faultVariables.stageHasUD = true;
+                    break;
+                case SA0:
+                    break;
+                case SA1:
+                    faultVariables.stageNoOfSA1++;
+                    break;
+                case FF:
+                    break;
+            }
+
+        }
+
+        tree_it: for (int i = 0; i < inDegree; i++) {
+            Fault memCellFault = memCellfaults.get(i);
 
             switch (memCellFault) { //TODO
                 case UD:
