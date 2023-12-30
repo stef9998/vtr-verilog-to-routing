@@ -10,9 +10,7 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.HashMap;
+import java.util.*;
 
 /**
  * @author Lukas Freiberger
@@ -149,7 +147,12 @@ public class XMLReader{
         }
     }
 
-    public void writeXML(int[][] defectEdges){
+
+    /**
+     * @deprecated Use {@link #writeXML(int[][])} instead
+     */
+    @Deprecated
+    public void writeXMLOld(int[][] defectEdges){
         /*TODO
             might be faster to just iterate through document and then delete corresponding edges/nodes.
             Probably create a Hashmap in the end which saves which edges/nodes needs to be deleted (maybe with boolean).
@@ -161,7 +164,7 @@ public class XMLReader{
 
         // delete the defect edges in the sorted array from the document
         for (int[] defectEdge: defectEdges){
-            Node node = edgeList.item(defectEdge[2]); //TODO this takes a lot of calculation time
+            Node node = edgeList.item(defectEdge[2]); //This takes a lot of calculation time
 
             if (node.getNodeType() == Node.ELEMENT_NODE){
                 Element element = (Element) node;
@@ -177,6 +180,42 @@ public class XMLReader{
             }
         }
     }
+
+    public void writeXML(int[][] defectEdges){
+        /*
+        Node to future developers:
+        Copying to another List seems unnecessary as we could just get the node from (DOM-)NodeList.
+        But getting Nodes from NodeList backward takes a long time for some reason.
+        But when deleting them it probably needs to happen backward, so the DataStructure won't be messed up.
+          - This needs to be investigated.
+            Because it might work anyway, as the one getting the Nodes to delete from is another then the one which deletes its children.
+         */
+        Node rrEdges = doc.getElementsByTagName("rr_edges").item(0);
+        int sinkNode, srcNode;
+        List<Node> nodeList = new ArrayList<>();
+
+        Arrays.sort(defectEdges, Comparator.comparingInt(a -> a[2]));
+        for (int[] defectEdge: defectEdges) {
+            nodeList.add(edgeList.item(defectEdge[2]));
+        }
+        for (int i = defectEdges.length - 1; i >= 0; i--) {
+            Node node = nodeList.get(i);
+            int[] defectEdge = defectEdges[i];
+            if (node.getNodeType() == Node.ELEMENT_NODE){
+                Element element = (Element) node;
+
+                sinkNode = Integer.parseInt(element.getAttribute("sink_node"));
+                srcNode = Integer.parseInt(element.getAttribute("src_node"));
+
+                if (defectEdge[0] == srcNode && defectEdge[1] == sinkNode){
+                    rrEdges.removeChild(node);
+                } else {
+                    System.out.print("Wrong Index!");
+                }
+            }
+        }
+    }
+
 
     /**
      * finalize the writing process
