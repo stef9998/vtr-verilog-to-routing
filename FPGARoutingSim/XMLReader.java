@@ -241,4 +241,15 @@ public class XMLReader{
     public HashMap<Integer, SwitchType> getSwitchTypes() {
         return switchTypes;
     }
+
+    /**
+     * Converts an rrEdge to the int array later needed for writing the XML back
+     * int[] = [NodeID, SinkNodeID, RRIndex]
+     *
+     * @param rrEdge the edge to convert
+     * @return the edge converted to an int array
+     */
+    public static int[] convertRREdgeForXMLWrite(RREdge rrEdge){
+        return new int[]{rrEdge.getNodeID(), rrEdge.getSinkNodeID(), rrEdge.getRRIndex()};
+    }
 }
