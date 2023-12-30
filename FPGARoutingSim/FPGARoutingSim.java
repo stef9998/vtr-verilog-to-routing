@@ -8,11 +8,26 @@ import java.util.HashMap;
  * @author Stefan Reichel
  */
 public class FPGARoutingSim {
+    /* CODE_SELECTOR
+    Used to select which Code should run
+        0 = Lukas
+        1 = Stefan
+     */
+    static final int CODE_SELECTOR = 1;
+    public static final boolean RUN_LUKAS_CODE;
+    public static final boolean RUN_STEFAN_CODE;
 
-    static ArrayList<MUXLucas> muxesLucas = new ArrayList<>();                    // array list containing the muxes
-    static ArrayList<MUXLucas> muxesLucas = new ArrayList<>();          // array list containing the muxes
+    static {
+        RUN_LUKAS_CODE = (CODE_SELECTOR == 0);
+        RUN_STEFAN_CODE = (CODE_SELECTOR == 1);
+    }
+
+    static ArrayList<MUXLukas> muxesLukas = new ArrayList<>();          // array list containing the muxes
+    static ArrayList<MUXStefan> muxes = new ArrayList<>();              // array list containing the muxes
     static ArrayList<int[]> defectEdges = new ArrayList<>();            // array list containing the defect edges
+    static ArrayList<int[]> defectEdgesStefan = new ArrayList<>();            // array list containing the defect edges
     static int[][] deleteList;                                          // array containing the delete list with defect edges
+    static int[][] deleteListStefan;                                          // array containing the delete list with defect edges
     static XMLReader reader = new XMLReader();                          // object of class XMLReader
     static FaultRates faultRates;                                       // object of class FaultRates
 
@@ -30,55 +45,65 @@ public class FPGARoutingSim {
 
         System.out.println("Edges read!");
 
-        // fill ArrayList<MUXLucas> muxes with multiplexers
+        // fill ArrayList<MUXLukas> muxes with multiplexers
         fillMuxArray();
 
         System.out.println("MUX Array filled!");
 
         // for every mux in array list of muxes
-        for (MUXLucas muxLucas: muxesLucas){
+        for (MUXLukas muxLukas : muxesLukas){
             // calculate muxes usability and add defect paths to defect edges
-            muxLucas.calculateUsability();
-            defectEdges.addAll(muxLucas.getRREdgeDeleteList());
+            muxLukas.calculateUsability();
+            defectEdges.addAll(muxLukas.getRREdgeDeleteList());
 
             // increase the overall number of edges, defect edges and memory cells
-            numOfEdges += muxLucas.getNumberOfEdges();
-            numOfDefectEdges += muxLucas.getNumOfDefectEdges();
-            numOfMemCells += muxLucas.getNumberOfMemCells();
-            numOfFaultyMemristors += muxLucas.getNumberOfFaultyMemristors();
+            numOfEdges += muxLukas.getNumberOfEdges();
+            numOfDefectEdges += muxLukas.getNumOfDefectEdges();
+            numOfMemCells += muxLukas.getNumberOfMemCells();
+            numOfFaultyMemristors += muxLukas.getNumberOfFaultyMemristors();
 
             // increase the overall number of SA0, SA1 and UD
-            faults = muxLucas.getNumberOfFaults();
+            faults = muxLukas.getNumberOfFaults();
             for (int i = 0; i < faults.length; i++){
                 numOfFaults[i] += faults[i];
             }
 
             // append the graph and stats of every mux to the output of the program
-            output.append(muxLucas.printStats());
-            output.append(muxLucas.printGraph());
+            output.append(muxLukas.printStats());
+            output.append(muxLukas.printGraph());
             output.append("--------------------------------------------------------------------------------------------\n");
+        }
+        for (MUXStefan muxStefan : muxes){
+            defectEdgesStefan.addAll(muxStefan.getDefectRREdgesList());
         }
 
         System.out.println("MUX Usabilities calculated!");
 
         // List to Array //TODO might be possible to remove zwischenstep
         deleteList = defectEdges.toArray(new int[defectEdges.size()][3]);
+        deleteListStefan = defectEdgesStefan.toArray(new int[defectEdgesStefan.size()][3]);
 
         // Sort defect edges by RRGraph Index (the third element) in descending order
         Arrays.sort(deleteList, Comparator.comparingInt((int[] a) -> a[2]).reversed());
 //        Arrays.parallelSort(deleteList, Comparator.comparingInt((int[] a) -> a[2]).reversed());
+        Arrays.sort(deleteListStefan, Comparator.comparingInt((int[] a) -> a[2]).reversed());
 
         System.out.println("Defect Edges sorted!");
 
         // write data into xml file
-        reader.writeXML(deleteList);
+        if (RUN_LUKAS_CODE) {
+            reader.writeXML(deleteList);
+        }
+        if (RUN_STEFAN_CODE) {
+            reader.writeXML(deleteListStefan);
+        }
         reader.finalizeWriting();
 
         System.out.println("XML written!");
 
         // add some overall output data
         output.append("FPGARoutingSim ran successfully!\n");
-        output.append("It has ").append(muxesLucas.size()).append(" Multiplexers\n");
+        output.append("It has ").append(muxesLukas.size()).append(" Multiplexers\n");
         output.append("Number of configurable Edges in FPGA: ").append(numOfEdges).append("\n");
         output.append("Number of defect Edges in FPGA after Fault Sim: ").append(numOfDefectEdges).append("\n");
         output.append("Number of Memory Cells to set the Edges in FPGA: ").append(numOfMemCells).append("\n");
@@ -111,7 +136,8 @@ public class FPGARoutingSim {
                 // If Array List does not contain Nodes of RRNodeType SOURCE and those with Sink RRNodeType SINK
                 if (muxSrcNodes.get(0).getNodeType() != RRNodeType.SOURCE && muxSrcNodes.get(0).getSinkNodeType() != RRNodeType.SINK
                         && switchTypes.get(muxSrcNodes.get(0).getSwitchID()) == SwitchType.mux) {
-                    muxesLucas.add(new MUXLucas(muxSrcNodes, faultRates));    // Add new MUX
+                    muxesLukas.add(new MUXLukas(muxSrcNodes, faultRates));      // Add new MUX
+                    muxes.add(new MUXStefan(muxSrcNodes, faultRates));          // Add new MUX
                 }
                 // Clear the List of MUX Source Nodes
                 muxSrcNodes.clear();
