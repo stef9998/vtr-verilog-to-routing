@@ -535,7 +535,7 @@ public class MUXLukas {
 
         // num of faults SA0, SA1 and UD
         int[] faults = getNumberOfFaultsPerType();
-        out += ("\nNumber of Faults:\nNum. of UD: " + faults[2] + " Faults\nNum. of SA1: " + faults[1] + " Faults\nNum. of SA0: " + faults[0] + " Faults\n");
+        out += ("\nNumber of Faults:\nNum. of SA0: " + faults[0] + " Faults\nNum. of SA1: " + faults[1] + " Faults\nNum. of UD: " + faults[2] + " Faults\n");
 
         return out;
     }
