@@ -84,14 +84,6 @@ public class MemCell6T2R implements MemCell{
         return numOfMemristorFaults;
     }
 
-    private Resistor getFirstMemristor() { //TODO see if needed
-        return firstMemristor;
-    }
-
-    private Resistor getSecondMemristor() { //TODO see if needed
-        return secondMemristor;
-    }
-
     public boolean firstMemristorContainsFault() {
         return firstMemristor.containsFault();
     }
