@@ -143,6 +143,22 @@ public class SwitchTree {
         return numOfFaults;
     }
 
+    public int getNumOfFFFaults() {
+        return numOfFF;
+    }
+
+    public int getNumOfSA0Faults() {
+        return numOfSA0;
+    }
+
+    public int getNumOfSA1Faults() {
+        return numOfSA1;
+    }
+
+    public int getNumOfUDFaults() {
+        return numOfUD;
+    }
+
     /**
      * Gets the total number of memristor faults across all switches.
      *
