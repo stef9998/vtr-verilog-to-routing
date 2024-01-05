@@ -36,6 +36,8 @@ public class FPGARoutingSim {
         int numOfEdges = 0, numOfDefectEdges = 0, numOfMemCells = 0, numOfFaultyMemristors = 0;    // total number of Edges, defect Edges and MemCells to configure Muxes in FPGA
         int numOfEdgesStefan = 0, numOfDefectEdgesStefan = 0, numOfMemCellsStefan = 0, numOfFaultyMemristorsStefan = 0;    // total number of Edges, defect Edges and MemCells to configure Muxes in FPGA
         int[] numOfFaults = new int[]{0, 0, 0};                         // total number of faults in order [SA0, SA1, UD] in MemCells to configure Muxes of FPGA
+        int[] numOfFaultsStefan = new int[]{0, 0, 0};                         // total number of faults in order [SA0, SA1, UD] in MemCells to configure Muxes of FPGA
+        int numOfSA0FaultsStefan = 0, numOfSA1FaultsStefan = 0, numOfUDFaultsStefan = 0;
         StringBuilder output = new StringBuilder();                     // String Builder for program output
         int[] faults;
 
@@ -84,6 +86,10 @@ public class FPGARoutingSim {
             output.append(muxStefan.printStats());
             output.append(muxStefan.printGraph());
             output.append("---MUX Stefan - End-------------------------------------------------------------------------\n");
+            numOfSA0FaultsStefan += muxStefan.getNumOfSA0();
+            numOfSA1FaultsStefan += muxStefan.getNumOfSA1();
+            numOfUDFaultsStefan  += muxStefan.getNumOfUD();
+
         }
 
         System.out.println("MUX Usabilities calculated!");

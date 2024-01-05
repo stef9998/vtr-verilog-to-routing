@@ -22,6 +22,8 @@ public class MUXStefan {
     private ArrayList<GraphPath<Vertex, Switch>> defectPaths = new ArrayList<>();       // array list of defect paths/edges in the mux
 
     private int numOfFaultyMemristors;
+    // Faults of Switches/MemoryCells
+    private int numOfFF, numOfSA0, numOfSA1, numOfUD;
 
     // Constructor
     public MUXStefan(ArrayList<RREdge> rrEdges, FaultRates faultRates){
@@ -47,11 +49,25 @@ public class MUXStefan {
 
     private void fillSwitchesInfo(){
         int faultyMemristors = 0;
+        int numOfFF = 0, numOfSA0 = 0, numOfSA1 = 0, numOfUD = 0;
         for (SwitchTree switchTree : firstStageNeighborhoods) {
             faultyMemristors += switchTree.getNumOfMemristorFaults();
+            numOfFF  += switchTree.getNumOfFFFaults();
+            numOfSA0 += switchTree.getNumOfSA0Faults();
+            numOfSA1 += switchTree.getNumOfSA1Faults();
+            numOfUD  += switchTree.getNumOfUDFaults();
         }
         faultyMemristors += secondStageNeighborhood.getNumOfMemristorFaults();
-        numOfFaultyMemristors = faultyMemristors;
+        numOfFF  += secondStageNeighborhood.getNumOfFFFaults();
+        numOfSA0 += secondStageNeighborhood.getNumOfSA0Faults();
+        numOfSA1 += secondStageNeighborhood.getNumOfSA1Faults();
+        numOfUD  += secondStageNeighborhood.getNumOfUDFaults();
+
+        this.numOfFaultyMemristors = faultyMemristors;
+        this.numOfFF  = numOfFF;
+        this.numOfSA0 = numOfSA0;
+        this.numOfSA1 = numOfSA1;
+        this.numOfUD  = numOfUD;
     }
 
     private void calculateUsability(ArrayList<RREdge> rrEdges) {
@@ -307,4 +323,26 @@ public class MUXStefan {
         return numOfFaultyMemristors;
     }
 
+    /**
+     * returns number of the individual faults SA0, SA1 and UD as an array
+     * @return [numOfSA0, numOfSA1, numOfUD]
+     */
+    public int[] getNumberOfFaultsPerType(){
+        return new int[]{getNumOfSA0(), getNumOfSA1(), getNumOfUD()};
+    }
+    public int getNumOfFF() {
+        return numOfFF;
+    }
+
+    public int getNumOfSA0() {
+        return numOfSA0;
+    }
+
+    public int getNumOfSA1() {
+        return numOfSA1;
+    }
+
+    public int getNumOfUD() {
+        return numOfUD;
+    }
 }
