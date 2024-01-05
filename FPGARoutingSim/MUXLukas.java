@@ -8,17 +8,17 @@ import org.jgrapht.graph.SimpleDirectedGraph;
  */
 public class MUXLukas {
 
-    final int switchID, muxSize, blockSize;                                     // Index of sink node, ID of the switch, Number of source nodes, Maximum size of one input block
-    final HashMap<Integer, RRNodeType> srcNodeTypes = new HashMap<>();          // Hash Map with Source Node Types
-    final RRNodeType sinkRRNodeType;                                            // Node Type of Sink Node
+    private final int switchID, muxSize, blockSize;                                     // Index of sink node, ID of the switch, Number of source nodes, Maximum size of one input block
+    private final HashMap<Integer, RRNodeType> srcNodeTypes = new HashMap<>();          // Hash Map with Source Node Types
+    private final RRNodeType sinkRRNodeType;                                            // Node Type of Sink Node
 
-    final Vertex sinkVertex;                                                    // Sink Vertex of the Graph
-    ArrayList<Vertex> srcVertices = new ArrayList<>();                          // Source Vertex of the Graph
-    Graph<Vertex, Switch> muxGraph = new SimpleDirectedGraph<>(Switch.class);   // Graph containing nodes and edges representing the MUX architecture
-    final Switch[] frstStageSwitches;                                           // switches in first stage
-    final Switch[] scndStageSwitches;                                           // switches in second stage
+    private final Vertex sinkVertex;                                                    // Sink Vertex of the Graph
+    private final ArrayList<Vertex> srcVertices = new ArrayList<>();                          // Source Vertex of the Graph
+    private final Graph<Vertex, Switch> muxGraph = new SimpleDirectedGraph<>(Switch.class);   // Graph containing nodes and edges representing the MUX architecture
+    private final Switch[] frstStageSwitches;                                           // switches in first stage
+    private final Switch[] scndStageSwitches;                                           // switches in second stage
 
-    ArrayList<GraphPath<Vertex, Switch>> defectPaths = new ArrayList<>();       // array list of defect paths/edges in the mux
+    private final ArrayList<GraphPath<Vertex, Switch>> defectPaths = new ArrayList<>();       // array list of defect paths/edges in the mux
 
     // Constructor
     public MUXLukas(ArrayList<RREdge> rrEdges, FaultRates faultRates){

@@ -3,8 +3,8 @@
  * @author Stefan Reichel
  */
 public class RREdge {
-    final int[] ids;                                    // IDs and RRIndex
-    final RRNodeType nodeType, sinkNodeType;            // RR Graph Node Types
+    private final int[] ids;                                    // IDs and RRIndex
+    private final RRNodeType nodeType, sinkNodeType;            // RR Graph Node Types
 
     public RREdge(int[] ids, RRNodeType nodeType, RRNodeType sinkNodeType){
         // set IDs

@@ -6,7 +6,7 @@ import java.util.HashMap;
  * @author Stefan Reichel
  */
 public class FaultRates {
-    final HashMap<Fault, Double> faultRates = new HashMap<>();  // HashMap containing Faults as Key and the fault-rate as value
+    private final HashMap<Fault, Double> faultRates = new HashMap<>();  // HashMap containing Faults as Key and the fault-rate as value
 
     /**
      * @param faultRates fault-rates for the different kinds of faults [SA0, SA1, UD]

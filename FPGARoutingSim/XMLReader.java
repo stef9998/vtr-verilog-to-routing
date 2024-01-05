@@ -18,12 +18,13 @@ import java.util.*;
  */
 public class XMLReader{
 
-    RREdge[] rrEdges;
-    private int[][] edges;
-    HashMap<Integer, SwitchType> switchTypes;
-    File file;
-    Document doc;
-    NodeList edgeList;
+    RREdge[] rrEdges; //TODO change to private
+//    private int[][] edges; //TODO change to private again
+    int[][] edges; //TODO change to private again
+    private HashMap<Integer, SwitchType> switchTypes;
+    private File file;
+    private Document doc;
+    private NodeList edgeList;
 
     /**
      * parse the xml file

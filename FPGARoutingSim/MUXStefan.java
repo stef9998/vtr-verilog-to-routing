@@ -8,22 +8,22 @@ import java.util.*;
  */
 public class MUXStefan {
 
-    final int switchID, sinkNodeID, muxSize, blockSize;                                     // Index of sink node, ID of the switch, Number of source nodes, Maximum size of one input block
-    final HashMap<Integer, RRNodeType> srcNodeTypes = new HashMap<>();          // Hash Map with Source Node Types
-    final RRNodeType sinkRRNodeType;                                            // Node Type of Sink Node
+    private final int switchID, sinkNodeID, muxSize, blockSize;                                     // Index of sink node, ID of the switch, Number of source nodes, Maximum size of one input block
+    private final HashMap<Integer, RRNodeType> srcNodeTypes = new HashMap<>();          // Hash Map with Source Node Types
+    private final RRNodeType sinkRRNodeType;                                            // Node Type of Sink Node
     private final FaultRates faultRates;
-    int numOfSA0MemCells, numOfSA1MemCells, numOfUDMemCells = 0;
-    int numOfSA0Memristors, numOfSA1Memristors, numOfUDMemristors = 0;
+    private int numOfSA0MemCells, numOfSA1MemCells, numOfUDMemCells = 0;
+    private int numOfSA0Memristors, numOfSA1Memristors, numOfUDMemristors = 0;
     //TODO think about if actually neccessary to have them as field
     // probably just possible to get it from SwitchTree<-Switch<-MemCell<-...
     private final Set<RREdge> defectRREdges = new HashSet<>(); //TODO change to TreeSet maybe -> maybe not, as it will be sorted later anyways. And does not seem to be that slow. And we can change later how it will be sorted!
-    ArrayList<Vertex> srcVertices = new ArrayList<>();                          // Source Vertex of the Graph
+    private ArrayList<Vertex> srcVertices = new ArrayList<>();                          // Source Vertex of the Graph
 //    Graph<Vertex, Switch> muxGraph = new SimpleDirectedGraph<>(Switch.class);   // Graph containing nodes and edges representing the MUX architecture //TODO if I want something for printout, do something close to this
-    final Switch[] frstStageSwitches;                                           // switches in first stage
-    final Switch[] scndStageSwitches;                                           // switches in second stage
 
+    private final Switch[] frstStageSwitches;                                           // switches in first stage
+    private final Switch[] scndStageSwitches;                                           // switches in second stage
     private int secondStageInDegree;
-    ArrayList<GraphPath<Vertex, Switch>> defectPaths = new ArrayList<>();       // array list of defect paths/edges in the mux
+    private ArrayList<GraphPath<Vertex, Switch>> defectPaths = new ArrayList<>();       // array list of defect paths/edges in the mux
 
     // Constructor
     public MUXStefan(ArrayList<RREdge> rrEdges, FaultRates faultRates){
@@ -49,7 +49,7 @@ public class MUXStefan {
 
     }
 
-    public void calculateUsability(ArrayList<RREdge> rrEdges) { //TODO maybe private
+    private void calculateUsability(ArrayList<RREdge> rrEdges) {
         // split list of edges into sublists. One sublist represent one connected block in first multiplexer stage.
         List<List<RREdge>> firstStageNeighborhoods = ListSplitter.splitList(rrEdges, blockSize);
         secondStageInDegree = firstStageNeighborhoods.size();

@@ -9,11 +9,11 @@ import java.util.List;
  * @author Stefan Reichel
  */
 public class SwitchTree {
-    List<Switch> switches;
-    final int numOfSwitches;
+    private final List<Switch> switches;
+    private final int numOfSwitches;
 
-    boolean[] FFPos, SA0Pos, SA1Pos, UDPos;
-    int numOfFF, numOfSA0, numOfSA1, numOfUD = 0;
+    private boolean[] FFPos, SA0Pos, SA1Pos, UDPos; //TODO create getter if needed
+    private int numOfFF, numOfSA0, numOfSA1, numOfUD = 0;
 
     private List<RREdge> rrEdges;
 
