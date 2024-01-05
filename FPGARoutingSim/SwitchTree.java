@@ -14,8 +14,8 @@ public class SwitchTree {
     private int numOfFaults;
     private int numOfMemristorFaults;
 
-    private boolean[] FFPos, SA0Pos, SA1Pos, UDPos; //TODO create getter if needed
-    private int numOfFF, numOfSA0, numOfSA1, numOfUD = 0;
+    private boolean[] FFPos, SA0Pos, SA1Pos, UDPos;
+    private int numOfFF = 0, numOfSA0 = 0, numOfSA1 = 0, numOfUD = 0;
 
     private List<RREdge> rrEdges;
 
