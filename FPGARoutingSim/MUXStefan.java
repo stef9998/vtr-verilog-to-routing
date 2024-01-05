@@ -21,6 +21,8 @@ public class MUXStefan {
     private int secondStageInDegree;
     private ArrayList<GraphPath<Vertex, Switch>> defectPaths = new ArrayList<>();       // array list of defect paths/edges in the mux
 
+    private int numOfFaultyMemristors;
+
     // Constructor
     public MUXStefan(ArrayList<RREdge> rrEdges, FaultRates faultRates){
         this.faultRates = faultRates;
@@ -40,7 +42,16 @@ public class MUXStefan {
         }
 
         calculateUsability(rrEdges);
+        fillSwitchesInfo();
+    }
 
+    private void fillSwitchesInfo(){
+        int faultyMemristors = 0;
+        for (SwitchTree switchTree : firstStageNeighborhoods) {
+            faultyMemristors += switchTree.getNumOfMemristorFaults();
+        }
+        faultyMemristors += secondStageNeighborhood.getNumOfMemristorFaults();
+        numOfFaultyMemristors = faultyMemristors;
     }
 
     private void calculateUsability(ArrayList<RREdge> rrEdges) {
@@ -293,12 +304,7 @@ public class MUXStefan {
     }
 
     public int getNumberOfFaultyMemristors(){
-        int faultyMemristors = 0;
-        for (SwitchTree switchTree : firstStageNeighborhoods) {
-            faultyMemristors += switchTree.getNumOfMemristorFaults();
-        }
-        faultyMemristors += secondStageNeighborhood.getNumOfMemristorFaults();
-        return faultyMemristors;
+        return numOfFaultyMemristors;
     }
 
 }
