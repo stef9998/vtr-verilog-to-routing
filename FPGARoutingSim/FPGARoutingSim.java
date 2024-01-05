@@ -33,13 +33,13 @@ public class FPGARoutingSim {
 
     public static void main(String[] args) {
         final long timeStart = System.currentTimeMillis();              // start time of simulation
-        int numOfEdges = 0, numOfDefectEdges = 0, numOfMemCells = 0, numOfFaultyMemristors = 0;    // total number of Edges, defect Edges and MemCells to configure Muxes in FPGA
+        int numOfEdgesLukas = 0, numOfDefectEdgesLukas = 0, numOfMemCellsLukas = 0, numOfFaultyMemristorsLukas = 0;    // total number of Edges, defect Edges and MemCells to configure Muxes in FPGA
         int numOfEdgesStefan = 0, numOfDefectEdgesStefan = 0, numOfMemCellsStefan = 0, numOfFaultyMemristorsStefan = 0;    // total number of Edges, defect Edges and MemCells to configure Muxes in FPGA
-        int[] numOfFaults = new int[]{0, 0, 0};                         // total number of faults in order [SA0, SA1, UD] in MemCells to configure Muxes of FPGA
+        int[] numOfFaultsLukas = new int[]{0, 0, 0};                         // total number of faults in order [SA0, SA1, UD] in MemCells to configure Muxes of FPGA
+        int numOfSA0FaultsLukas = 0, numOfSA1FaultsLukas = 0, numOfUDFaultsLukas = 0;
         int[] numOfFaultsStefan = new int[]{0, 0, 0};                         // total number of faults in order [SA0, SA1, UD] in MemCells to configure Muxes of FPGA
         int numOfSA0FaultsStefan = 0, numOfSA1FaultsStefan = 0, numOfUDFaultsStefan = 0;
         StringBuilder output = new StringBuilder();                     // String Builder for program output
-        int[] faults;
 
         // get file name, read file and instantiate fault rates
         String file = args[0];
@@ -59,16 +59,19 @@ public class FPGARoutingSim {
             defectEdges.addAll(muxLukas.getRREdgeDeleteList());
 
             // increase the overall number of edges, defect edges and memory cells
-            numOfEdges += muxLukas.getNumberOfEdges();
-            numOfDefectEdges += muxLukas.getNumOfDefectEdges();
-            numOfMemCells += muxLukas.getNumberOfMemCells();
-            numOfFaultyMemristors += muxLukas.getNumberOfFaultyMemristors();
+            numOfEdgesLukas += muxLukas.getNumberOfEdges();
+            numOfDefectEdgesLukas += muxLukas.getNumOfDefectEdges();
+            numOfMemCellsLukas += muxLukas.getNumberOfMemCells();
+            numOfFaultyMemristorsLukas += muxLukas.getNumberOfFaultyMemristors();
 
             // increase the overall number of SA0, SA1 and UD
-            faults = muxLukas.getNumberOfFaultsPerType();
+            int[] faults = muxLukas.getNumberOfFaultsPerType();
             for (int i = 0; i < faults.length; i++){
-                numOfFaults[i] += faults[i];
+                numOfFaultsLukas[i] += faults[i];
             }
+            numOfSA0FaultsLukas += numOfFaultsLukas[0];
+            numOfSA1FaultsLukas += numOfFaultsLukas[1];
+            numOfUDFaultsLukas  += numOfFaultsLukas[2];
 
             // append the graph and stats of every mux to the output of the program
             output.append(muxLukas.printStats());
@@ -81,16 +84,16 @@ public class FPGARoutingSim {
             numOfDefectEdgesStefan += muxStefan.getNumOfDefectEdges();
             numOfMemCellsStefan += muxStefan.getNumberOfMemCells();
             numOfFaultyMemristorsStefan += muxStefan.getNumberOfFaultyMemristors();
+            numOfSA0FaultsStefan += muxStefan.getNumOfSA0();
+            numOfSA1FaultsStefan += muxStefan.getNumOfSA1();
+            numOfUDFaultsStefan  += muxStefan.getNumOfUD();
 
             output.append("---MUX Stefan - Begin-----------------------------------------------------------------------\n");
             output.append(muxStefan.printStats());
             output.append(muxStefan.printGraph());
             output.append("---MUX Stefan - End-------------------------------------------------------------------------\n");
-            numOfSA0FaultsStefan += muxStefan.getNumOfSA0();
-            numOfSA1FaultsStefan += muxStefan.getNumOfSA1();
-            numOfUDFaultsStefan  += muxStefan.getNumOfUD();
-
         }
+
 
         System.out.println("MUX Usabilities calculated!");
 
@@ -119,14 +122,14 @@ public class FPGARoutingSim {
         // add some overall output data
         output.append("FPGARoutingSim ran successfully!\n");
         output.append("It has ").append(muxesLukas.size()).append(" Multiplexers\n");
-        output.append("Number of configurable Edges in FPGA: ").append(numOfEdges).append("\n");
-        output.append("Number of defect Edges in FPGA after Fault Sim: ").append(numOfDefectEdges).append("\n");
-        output.append("Number of Memory Cells to set the Edges in FPGA: ").append(numOfMemCells).append("\n");
-        output.append("Number of SA0 in Memory Cells: ").append(numOfFaults[0]).append("\n");
-        output.append("Number of SA1 in Memory Cells: ").append(numOfFaults[1]).append("\n");
-        output.append("Number of UD in Memory Cells: ").append(numOfFaults[2]).append("\n");
-        output.append("Number of faulty Memristors: ").append(numOfFaultyMemristors).append("\n");
-        output.append("Number of total faults in Memory Cells: ").append(numOfFaults[0] + numOfFaults[1] + numOfFaults[2]).append("\n");
+        output.append("Number of configurable Edges in FPGA: ").append(numOfEdgesLukas).append("\n");
+        output.append("Number of defect Edges in FPGA after Fault Sim: ").append(numOfDefectEdgesLukas).append("\n");
+        output.append("Number of Memory Cells to set the Edges in FPGA: ").append(numOfMemCellsLukas).append("\n");
+        output.append("Number of SA0 in Memory Cells: ").append(numOfFaultsLukas[0]).append("\n");
+        output.append("Number of SA1 in Memory Cells: ").append(numOfFaultsLukas[1]).append("\n");
+        output.append("Number of UD in Memory Cells: ").append(numOfFaultsLukas[2]).append("\n");
+        output.append("Number of faulty Memristors: ").append(numOfFaultyMemristorsLukas).append("\n");
+        output.append("Number of total faults in Memory Cells: ").append(numOfFaultsLukas[0] + numOfFaultsLukas[1] + numOfFaultsLukas[2]).append("\n");
         // set end time of the simulation and append overall time to output
         final long timeEnd = System.currentTimeMillis();
         output.append("Needed ").append((timeEnd - timeStart)/1000).append(" s\n");
