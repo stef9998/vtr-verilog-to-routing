@@ -20,8 +20,8 @@ public class MUXStefan {
     private ArrayList<Vertex> srcVertices = new ArrayList<>();                          // Source Vertex of the Graph
 //    Graph<Vertex, Switch> muxGraph = new SimpleDirectedGraph<>(Switch.class);   // Graph containing nodes and edges representing the MUX architecture //TODO if I want something for printout, do something close to this
 
-    private final Switch[] frstStageSwitches;                                           // switches in first stage
-    private final Switch[] scndStageSwitches;                                           // switches in second stage
+    private SwitchTree secondStageNeighborhood;
+    private final List<SwitchTree> secondStageSwitches = new ArrayList<>(); //TODO maybe for printout. But I might still want to add a Neighborhood-Class to bundle everything
     private int secondStageInDegree;
     private ArrayList<GraphPath<Vertex, Switch>> defectPaths = new ArrayList<>();       // array list of defect paths/edges in the mux
 
@@ -29,8 +29,6 @@ public class MUXStefan {
     public MUXStefan(ArrayList<RREdge> rrEdges, FaultRates faultRates){
         this.faultRates = faultRates;
 //        this.rrEdges = rrEdges;
-        frstStageSwitches = null; //TODO delete
-        scndStageSwitches = null; //TODO delete
 
         // Set switchID, sinkNodeID, muxSize and maxBlockSize
         this.switchID = rrEdges.get(0).getSwitchID();
@@ -51,12 +49,10 @@ public class MUXStefan {
 
     private void calculateUsability(ArrayList<RREdge> rrEdges) {
         // split list of edges into sublists. One sublist represent one connected block in first multiplexer stage.
-        List<List<RREdge>> firstStageNeighborhoods = ListSplitter.splitList(rrEdges, blockSize);
-        secondStageInDegree = firstStageNeighborhoods.size();
-        List<Switch> secondStageSwitches = new ArrayList<>();
-        List<Fault> secondStageFaults = new ArrayList<>(); //TODO needed?
+        List<List<RREdge>> firstStageRREdgeNeighborhoods = ListSplitter.splitList(rrEdges, blockSize);
+        secondStageInDegree = firstStageRREdgeNeighborhoods.size();
 
-        SwitchTree secondStageNeighborhood = new SwitchTree(secondStageInDegree, MemCell4T1R.class, faultRates);
+        secondStageNeighborhood = new SwitchTree(secondStageInDegree, MemCell4T1R.class, faultRates);
 
         //TODO Sonderfall secondStageInDegree == 1
         int unDisconnectableSA1s = 0;
@@ -64,34 +60,34 @@ public class MUXStefan {
             // for every second stage switch
             // calculate the corresponding neighborhood
             Fault secondStageFault = secondStageNeighborhood.getFault(i);
-            List<RREdge> firstStageNeighborhood = firstStageNeighborhoods.get(i);
+            List<RREdge> firstStageRREdgeNeighborhood = firstStageRREdgeNeighborhoods.get(i);
 
-            SwitchTree firstStageTree = calculateFirstStageDefects(firstStageNeighborhood);
+            SwitchTree firstStageTree = calculateFirstStageDefects(firstStageRREdgeNeighborhood);
 
             // depending on fault state of the second stage the corresponding first stage
             switch (secondStageFault) {
                 case FF:
                     break;
                 case SA0:
-                    defectRREdges.addAll(firstStageNeighborhood);
+                    defectRREdges.addAll(firstStageRREdgeNeighborhood);
                     break;
                 case UD:
                     if (firstStageTree.hasUD() || firstStageTree.hasSA1()) {
-                        deleteEveryEdge(firstStageNeighborhoods);
+                        deleteEveryEdge(firstStageRREdgeNeighborhoods);
                         break mux_utility_calc;
                     } else {
-                        defectRREdges.addAll(firstStageNeighborhood);
+                        defectRREdges.addAll(firstStageRREdgeNeighborhood);
                     }
                     break;
                 case SA1:
                     if (firstStageTree.hasUD() || firstStageTree.hasMoreThanOneSA1()) {
-                        deleteEveryEdge(firstStageNeighborhoods);
+                        deleteEveryEdge(firstStageRREdgeNeighborhoods);
                         break mux_utility_calc;
                     } else if (firstStageTree.hasOneSA1()) {
                         unDisconnectableSA1s ++;
                         // TODO
                     } else {
-                        defectRREdges.addAll(firstStageNeighborhood);
+                        defectRREdges.addAll(firstStageRREdgeNeighborhood);
                     }
                     break;
             }
@@ -99,7 +95,7 @@ public class MUXStefan {
 
         if (unDisconnectableSA1s > 1) {
             //TODO now that there is a SwitchTree class, I can make the calculation efficient
-            deleteEveryEdge(firstStageNeighborhoods);
+            deleteEveryEdge(firstStageRREdgeNeighborhoods);
         }
     }
 
