@@ -53,8 +53,7 @@ public class FPGARoutingSim {
 
         // for every mux in array list of muxes
         for (MUXLukas muxLukas : muxesLukas){
-            // calculate muxes usability and add defect paths to defect edges
-            muxLukas.calculateUsability();
+            // add defect paths to defect edges
             defectEdges.addAll(muxLukas.getRREdgeDeleteList());
 
             // increase the overall number of edges, defect edges and memory cells

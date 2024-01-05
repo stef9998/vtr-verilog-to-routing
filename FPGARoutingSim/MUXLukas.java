@@ -90,9 +90,10 @@ public class MUXLukas {
                 l ++;
             }
         }
+        calculateUsability();
     }
 
-    public void calculateUsability(){
+    private void calculateUsability(){
 
         // Lists of paths in the graph
         ArrayList<GraphPath<Vertex, Switch>> completeBlockPaths = new ArrayList<>();
