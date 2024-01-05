@@ -461,7 +461,10 @@ public class MUXLukas {
         }
     }
 
-    // returns the list with defect paths
+    /**
+     * returns the list with defect paths
+     * @return [sourceID, sinkID, rrIndex]
+     */
     public ArrayList<int[]> getRREdgeDeleteList(){
         ArrayList<int[]> edges = new ArrayList<>();
 
@@ -562,6 +565,7 @@ public class MUXLukas {
 
     /**
      * returns number of the faults SA0, SA1 and UD
+     * @return [numOfSA0, numOfSA1, numOfUD]
      */
     public int[] getNumberOfFaults(){
         // how much switches contain UD, SA1 or SA0
@@ -608,6 +612,10 @@ public class MUXLukas {
         return new int[]{numSA0, numSA1, numUD};
     }
 
+    /**
+     * returns the number of resistors with a fault
+     * @return number of resistors with a fault
+     */
     public int getNumberOfFaultyMemristors(){
         // how much switches contain UD, SA1 or SA0
         int numFault = 0;
