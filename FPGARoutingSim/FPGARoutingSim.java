@@ -82,7 +82,7 @@ public class FPGARoutingSim {
 
             output.append("---MUX Stefan - Begin-----------------------------------------------------------------------\n");
             output.append(muxStefan.printStats());
-//            output.append(muxStefan.printGraph());
+            output.append(muxStefan.printGraph());
             output.append("---MUX Stefan - End-------------------------------------------------------------------------\n");
         }
 

@@ -209,20 +209,49 @@ public class MUXStefan {
     }
 
     //TODO put Switch/Fault/... in usage-calculation into new fields to print them out if needed
-//    /**
-//     * returns a readable representation of the MUX Graph
-//     * @return representation of the MUX Graph
-//     */
-//    public String printGraph(){
-//        StringBuilder out = new StringBuilder();
-//
-//        // print graph in String Builder
-//        Set<Switch> edges = muxGraph.edgeSet();
-//        for(Switch edge: edges){
-//            out.append("Edge Source: (").append(muxGraph.getEdgeSource(edge).getVertexID()).append(", ").append(muxGraph.getEdgeSource(edge).getVertexType()).append("); Fault: ").append(edge.getFault()).append("; Edge Target: (").append(muxGraph.getEdgeTarget(edge).getVertexID()).append(", ").append(muxGraph.getEdgeTarget(edge).getVertexType()).append(")\n");
-//        }
-//        return out.toString();
-//    }
+    //TODO change naming maybe, as I am not using a graph anymore
+    // maybe leave for backwards compatibility. But make it @deprecated?
+    /**
+     * returns a readable representation of the MUX Graph
+     * @return representation of the MUX Graph
+     */
+    public String printGraph(){
+        // last sourceID is the biggest number, so also the longest. This length is used for padding the printout
+        int lastSourceID = firstStageNeighborhoods.get(secondStageInDegree-1).getRREdge(firstStageNeighborhoods.get(secondStageInDegree-1).getNumOfSwitches()-1).getNodeID();
+        final int srcIDStrLen = Integer.toString(lastSourceID).length();
+
+        StringBuilder out = new StringBuilder();
+
+        // print graph in String Builder
+        for (int i = 0; i < secondStageInDegree; i++) {
+            SwitchTree firstStageTree = firstStageNeighborhoods.get(i);
+            out.append(String.format("%" + (15 + srcIDStrLen) + "s", "")).append("-----").append("\n");
+            for (int j = 0; j < firstStageTree.getNumOfSwitches(); j++) {
+                out.append("(")
+                        .append(String.format("%" + srcIDStrLen + "s", firstStageTree.getRREdge(j).getNodeID()))
+                        .append(", SRCNODE) --| ")
+                        .append(String.format("%-" + 3 + "s", firstStageTree.getFault(j)))
+                        .append(" |\n");
+            }
+            out.deleteCharAt(out.length()-1);
+            out.append("-- (Link")
+                    .append(String.format("%" + 2 + "s", i))
+                    .append(")\n");
+        }
+        out.append(String.format("%" + (15 + srcIDStrLen) + "s", "")).append("-----").append("\n");
+        out.append(String.format("%" + (12) + "s", "")).append("-----\n");
+        for (int i = 0; i < secondStageInDegree; i++) {
+            out.append("(Link")
+                    .append(String.format("%" + 2 + "s", i))
+                    .append(") --| ")
+                    .append(String.format("%-" + 3 + "s", secondStageNeighborhood.getFault(i)))
+                    .append(" |\n");
+        }
+        out.deleteCharAt(out.length()-1);
+        out.append("-- (").append(sinkNodeID).append(", SINKNODE)\n");
+        out.append(String.format("%" + (12) + "s", "")).append("-----\n");
+        return out.toString();
+    }
 
     /**
      * prints some statistics about the multiplexer
@@ -230,13 +259,12 @@ public class MUXStefan {
      */
     public String printStats(){
         // general information on MUX
-        String out = ("Mux Size: " + muxSize + " Inputs\nSink Node: " + sinkNodeID + "\nSwitch ID: " + switchID);
-
-        // num of mem cells
-        int numMemCells = getNumberOfMemCells();
-        out += ("\nNumber of MemCells: " + numMemCells + "\n");
-
-        return out;
+        StringBuilder out = new StringBuilder();
+        out.append("Mux Size: ").append(muxSize).append(" Inputs\n")
+                .append("Sink Node: ").append(sinkNodeID).append("\n")
+                .append("Switch ID: ").append(switchID).append("\n")
+                .append("Number of MemCells: ").append(getNumberOfMemCells()).append("\n");
+        return out.toString();
     }
 
     /**
