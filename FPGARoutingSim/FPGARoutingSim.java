@@ -77,6 +77,8 @@ public class FPGARoutingSim {
             defectEdgesStefan.addAll(muxStefan.getDefectRREdgesList());
             numOfEdgesStefan += muxStefan.getNumberOfEdges();
             numOfDefectEdgesStefan += muxStefan.getNumOfDefectEdges();
+            numOfMemCellsStefan += muxStefan.getNumberOfMemCells();
+            numOfFaultyMemristorsStefan += muxStefan.getNumberOfFaultyMemristors();
 
             output.append("---MUX Stefan - Begin-----------------------------------------------------------------------\n");
             output.append(muxStefan.printStats());

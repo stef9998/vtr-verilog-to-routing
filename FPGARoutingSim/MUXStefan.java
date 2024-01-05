@@ -12,16 +12,12 @@ public class MUXStefan {
     private final HashMap<Integer, RRNodeType> srcNodeTypes = new HashMap<>();          // Hash Map with Source Node Types
     private final RRNodeType sinkRRNodeType;                                            // Node Type of Sink Node
     private final FaultRates faultRates;
-    private int numOfSA0MemCells, numOfSA1MemCells, numOfUDMemCells = 0;
-    private int numOfSA0Memristors, numOfSA1Memristors, numOfUDMemristors = 0;
-    //TODO think about if actually neccessary to have them as field
-    // probably just possible to get it from SwitchTree<-Switch<-MemCell<-...
     private final Set<RREdge> defectRREdges = new HashSet<>(); //TODO change to TreeSet maybe -> maybe not, as it will be sorted later anyways. And does not seem to be that slow. And we can change later how it will be sorted!
     private ArrayList<Vertex> srcVertices = new ArrayList<>();                          // Source Vertex of the Graph
 //    Graph<Vertex, Switch> muxGraph = new SimpleDirectedGraph<>(Switch.class);   // Graph containing nodes and edges representing the MUX architecture //TODO if I want something for printout, do something close to this
 
     private SwitchTree secondStageNeighborhood;
-    private final List<SwitchTree> secondStageSwitches = new ArrayList<>(); //TODO maybe for printout. But I might still want to add a Neighborhood-Class to bundle everything
+    private final List<SwitchTree> firstStageNeighborhoods = new ArrayList<>(); //TODO maybe for printout. But I might still want to add a Neighborhood-Class to bundle everything
     private int secondStageInDegree;
     private ArrayList<GraphPath<Vertex, Switch>> defectPaths = new ArrayList<>();       // array list of defect paths/edges in the mux
 
@@ -62,7 +58,8 @@ public class MUXStefan {
             Fault secondStageFault = secondStageNeighborhood.getFault(i);
             List<RREdge> firstStageRREdgeNeighborhood = firstStageRREdgeNeighborhoods.get(i);
 
-            SwitchTree firstStageTree = calculateFirstStageDefects(firstStageRREdgeNeighborhood);
+            SwitchTree firstStageNeighborhood = calculateFirstStageDefects(firstStageRREdgeNeighborhood);
+            firstStageNeighborhoods.add(i, firstStageNeighborhood);
 
             // depending on fault state of the second stage the corresponding first stage
             switch (secondStageFault) {
@@ -72,7 +69,7 @@ public class MUXStefan {
                     defectRREdges.addAll(firstStageRREdgeNeighborhood);
                     break;
                 case UD:
-                    if (firstStageTree.hasUD() || firstStageTree.hasSA1()) {
+                    if (firstStageNeighborhood.hasUD() || firstStageNeighborhood.hasSA1()) {
                         deleteEveryEdge(firstStageRREdgeNeighborhoods);
                         break mux_utility_calc;
                     } else {
@@ -80,10 +77,10 @@ public class MUXStefan {
                     }
                     break;
                 case SA1:
-                    if (firstStageTree.hasUD() || firstStageTree.hasMoreThanOneSA1()) {
+                    if (firstStageNeighborhood.hasUD() || firstStageNeighborhood.hasMoreThanOneSA1()) {
                         deleteEveryEdge(firstStageRREdgeNeighborhoods);
                         break mux_utility_calc;
-                    } else if (firstStageTree.hasOneSA1()) {
+                    } else if (firstStageNeighborhood.hasOneSA1()) {
                         unDisconnectableSA1s ++;
                         // TODO
                     } else {
@@ -130,13 +127,13 @@ public class MUXStefan {
         return switchTree;
     }
 
-    private void deleteEveryEdge(List<List<RREdge>> firstStageNeighborhoods){
-        if (secondStageInDegree == firstStageNeighborhoods.size()){
+    private void deleteEveryEdge(List<List<RREdge>> firstStageRREdgeNeighborhood){
+        if (secondStageInDegree == firstStageRREdgeNeighborhood.size()){
             for (int i = 0; i < secondStageInDegree; i++) {
-                defectRREdges.addAll(firstStageNeighborhoods.get(i));
+                defectRREdges.addAll(firstStageRREdgeNeighborhood.get(i));
             }
         } else {
-            System.err.println("Error in Mux-Calculation: secondStageInDegree in not equal to firstStageNeighborhoods.size()\n" +
+            System.err.println("Error in Mux-Calculation: secondStageInDegree in not equal to firstStageRREdgeNeighborhood.size()\n" +
                     "firstStageNeigborhoods had been changed somewhere");
             System.exit(-1);
         }
@@ -260,6 +257,15 @@ public class MUXStefan {
     public int getNumberOfMemCells(){
         // Every edge has one path with one memory cell in first stage. Then add path of second stage.
         return muxSize + secondStageInDegree;
+    }
+
+    public int getNumberOfFaultyMemristors(){
+        int faultyMemristors = 0;
+        for (SwitchTree switchTree : firstStageNeighborhoods) {
+            faultyMemristors += switchTree.getNumOfMemristorFaults();
+        }
+        faultyMemristors += secondStageNeighborhood.getNumOfMemristorFaults();
+        return faultyMemristors;
     }
 
 }
