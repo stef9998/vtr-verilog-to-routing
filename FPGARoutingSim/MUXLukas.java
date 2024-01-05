@@ -516,7 +516,9 @@ public class MUXLukas {
     }
 
     /**
-     * prints some statistics about the multiplexer
+     * Returns some statistics about the multiplexer as a String.
+     * For printout and logging
+     *
      * @return statistics about the multiplexer
      */
     public String printStats(){

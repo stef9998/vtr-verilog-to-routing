@@ -4,6 +4,7 @@ import java.util.*;
 
 /**
  * @author Lukas Freiberger
+ * @author Stefan Reichel
  */
 public class MUXStefan {
 
@@ -13,11 +14,9 @@ public class MUXStefan {
     private final FaultRates faultRates;
     int numOfSA0MemCells, numOfSA1MemCells, numOfUDMemCells = 0;
     int numOfSA0Memristors, numOfSA1Memristors, numOfUDMemristors = 0;
-    //TODO functions to increment these variables
-    //TODO think about if actually neccessary to count as I break earlier when I have specific errors, as I do not need to evaluate every Memristor
-
-    final Vertex sinkVertex;                                                    // Sink Vertex of the Graph
-    private final Set<RREdge> defectRREdges = new HashSet<>(); //TODO change to TreeSet maybe
+    //TODO think about if actually neccessary to have them as field
+    // probably just possible to get it from SwitchTree<-Switch<-MemCell<-...
+    private final Set<RREdge> defectRREdges = new HashSet<>(); //TODO change to TreeSet maybe -> maybe not, as it will be sorted later anyways. And does not seem to be that slow. And we can change later how it will be sorted!
     ArrayList<Vertex> srcVertices = new ArrayList<>();                          // Source Vertex of the Graph
 //    Graph<Vertex, Switch> muxGraph = new SimpleDirectedGraph<>(Switch.class);   // Graph containing nodes and edges representing the MUX architecture //TODO if I want something for printout, do something close to this
     final Switch[] frstStageSwitches;                                           // switches in first stage
@@ -29,7 +28,6 @@ public class MUXStefan {
     public MUXStefan(ArrayList<RREdge> rrEdges, FaultRates faultRates){
         this.faultRates = faultRates;
 //        this.rrEdges = rrEdges;
-        sinkVertex = null; //TODO delete
         frstStageSwitches = null; //TODO delete
         scndStageSwitches = null; //TODO delete
 
@@ -50,9 +48,10 @@ public class MUXStefan {
 
     }
 
-    public void calculateUsability(ArrayList<RREdge> rrEdges){ //TODO maybe private
+    public void calculateUsability(ArrayList<RREdge> rrEdges) { //TODO maybe private
+        // split list of edges into sublists. One sublist represent one connected block in first multiplexer stage.
         List<List<RREdge>> firstStageNeighborhoods = ListSplitter.splitList(rrEdges, blockSize);
-        int secondStageInDegree = firstStageNeighborhoods.size();
+        secondStageInDegree = firstStageNeighborhoods.size();
         List<Switch> secondStageSwitches = new ArrayList<>();
         List<Fault> secondStageFaults = new ArrayList<>(); //TODO needed?
 
@@ -180,21 +179,12 @@ public class MUXStefan {
 
 
     // returns the list with defect paths
-    public ArrayList<int[]> getRREdgeDeleteList(){ //TODO change. Hope I don't need this vertex stuff in FPGARoutingSim
-        ArrayList<int[]> edges = new ArrayList<>();
-
-        // extract relevant information for XMLReader/Writer
-        for (GraphPath<Vertex, Switch> path: defectPaths){
-            edges.add(new int[]{path.getStartVertex().getVertexID(), path.getEndVertex().getVertexID(), path.getStartVertex().getRRIndex()});
-        }
-        return edges;
+    public ArrayList<int[]> getRREdgeDeleteList(){ //TODO is the old method from lucas MUX
+        return (ArrayList<int[]>) getDefectRREdgesList();
     }
 
     public Set<RREdge> getDefectRREdges() {
         return defectRREdges;
-        //TODO maybe do directly the int[][] needed for XML Writer
-        // or maybe make another new method
-
     }
 
     public List<int[]> getDefectRREdgesList() {
@@ -209,6 +199,8 @@ public class MUXStefan {
 
 
     // calculates the block size such that number of mem cells is minimal
+    // TODO: is the old method from lukas. Does not minimize the memCells anymore.
+    //  minimal would now be the trivial case of one stage.
     private int calcBlockSize(){
         int blockSize = muxSize;        // initial block size is mux size
         int numOfMemCell = muxSize;     // initial number of mem cells is mux size
@@ -250,9 +242,10 @@ public class MUXStefan {
         return muxSize <= blockSize;
     }
 
+    //TODO put Switch/Fault/... in usage-calculation into new fields to print them out if needed
 //    /**
 //     * returns a readable representation of the MUX Graph
-//     * @return readable representation of the MUX Graph
+//     * @return representation of the MUX Graph
 //     */
 //    public String printGraph(){
 //        StringBuilder out = new StringBuilder();
@@ -293,15 +286,16 @@ public class MUXStefan {
      * @return number of defect edges
      */
     public int getNumOfDefectEdges(){
-        return defectPaths.size();
+        return defectRREdges.size();
     }
 
     /**
      * returns the number of mem cells used by the MUX
      * @return number of mem cells used by the MUX
      */
-    public int getNumberOfMemCells(){ //TODO see if this is still right
-        return (muxSize > blockSize) ? ((muxSize/blockSize) + ((muxSize % blockSize != 0) ? 1 : 0) + blockSize) : muxSize;
+    public int getNumberOfMemCells(){
+        // Every edge has one path with one memory cell in first stage. Then add path of second stage.
+        return muxSize + secondStageInDegree;
     }
 
 }
