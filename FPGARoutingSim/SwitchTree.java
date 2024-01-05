@@ -11,6 +11,8 @@ import java.util.List;
 public class SwitchTree {
     private final List<Switch> switches;
     private final int numOfSwitches;
+    private int numOfFaults;
+    private int numOfMemristorFaults;
 
     private boolean[] FFPos, SA0Pos, SA1Pos, UDPos; //TODO create getter if needed
     private int numOfFF, numOfSA0, numOfSA1, numOfUD = 0;
@@ -74,7 +76,9 @@ public class SwitchTree {
         SA1Pos = new boolean[numOfSwitches];
         UDPos = new boolean[numOfSwitches];
         for (int i = 0; i < numOfSwitches; i++) {
-            switch (switches.get(i).getFault()) {
+            Switch aSwitch = switches.get(i);
+            numOfMemristorFaults += aSwitch.getNumOfFaultyMemristors();
+            switch (aSwitch.getFault()) {
                 case FF:
                     FFPos[i] = true;
                     numOfFF ++;
@@ -93,6 +97,7 @@ public class SwitchTree {
                     break;
             }
         }
+        numOfFaults = numOfSA0 + numOfSA1 + numOfUD;
     }
 
     /**
@@ -127,6 +132,24 @@ public class SwitchTree {
     public Fault getFault(int i){
         Switch aSwitch = getSwitch(i);
         return (aSwitch != null) ? aSwitch.getFault() : null;
+    }
+
+    /**
+     * Gets the total number of faults across all switches.
+     *
+     * @return the total number of faults
+     */
+    public int getNumOfFaults() {
+        return numOfFaults;
+    }
+
+    /**
+     * Gets the total number of memristor faults across all switches.
+     *
+     * @return the total number of memristor faults
+     */
+    public int getNumOfMemristorFaults() {
+        return numOfMemristorFaults;
     }
 
     /**
