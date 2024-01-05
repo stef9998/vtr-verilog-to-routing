@@ -7,7 +7,7 @@ import java.util.*;
  */
 public class MUXStefan {
 
-    final int switchID, muxSize, blockSize;                                     // Index of sink node, ID of the switch, Number of source nodes, Maximum size of one input block
+    final int switchID, sinkNodeID, muxSize, blockSize;                                     // Index of sink node, ID of the switch, Number of source nodes, Maximum size of one input block
     final HashMap<Integer, RRNodeType> srcNodeTypes = new HashMap<>();          // Hash Map with Source Node Types
     final RRNodeType sinkRRNodeType;                                            // Node Type of Sink Node
     private final FaultRates faultRates;
@@ -33,8 +33,9 @@ public class MUXStefan {
         frstStageSwitches = null; //TODO delete
         scndStageSwitches = null; //TODO delete
 
-        // Set switchID, muxSize and maxBlockSize
+        // Set switchID, sinkNodeID, muxSize and maxBlockSize
         this.switchID = rrEdges.get(0).getSwitchID();
+        this.sinkNodeID = rrEdges.get(0).getSinkNodeID();
         this.muxSize = rrEdges.size();
         this.blockSize = calcBlockSize(); //TODO
 
@@ -270,11 +271,11 @@ public class MUXStefan {
      */
     public String printStats(){
         // general information on MUX
-        String out = ("Mux Size: " + muxSize + " Inputs\nSink Node: " + sinkVertex.getVertexID() + "\nSwitch ID: " + switchID);
+        String out = ("Mux Size: " + muxSize + " Inputs\nSink Node: " + sinkNodeID + "\nSwitch ID: " + switchID);
 
         // num of mem cells
         int numMemCells = getNumberOfMemCells();
-        out += ("\nNumber of MemCells: " + numMemCells);
+        out += ("\nNumber of MemCells: " + numMemCells + "\n");
 
         return out;
     }
