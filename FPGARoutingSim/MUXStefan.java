@@ -50,6 +50,12 @@ public class MUXStefan {
 
         secondStageNeighborhood = new SwitchTree(secondStageInDegree, MemCell4T1R.class, faultRates);
 
+        for (int i = 0; i < secondStageInDegree; i++) {
+            List<RREdge> firstStageRREdgeNeighborhood = firstStageRREdgeNeighborhoods.get(i);
+
+            SwitchTree firstStageNeighborhood = calculateFirstStageDefects(firstStageRREdgeNeighborhood);
+            firstStageNeighborhoods.add(i, firstStageNeighborhood);
+        }
         //TODO Sonderfall secondStageInDegree == 1
         int unDisconnectableSA1s = 0;
         mux_utility_calc: for (int i = 0; i < secondStageInDegree; i++) {
@@ -58,8 +64,7 @@ public class MUXStefan {
             Fault secondStageFault = secondStageNeighborhood.getFault(i);
             List<RREdge> firstStageRREdgeNeighborhood = firstStageRREdgeNeighborhoods.get(i);
 
-            SwitchTree firstStageNeighborhood = calculateFirstStageDefects(firstStageRREdgeNeighborhood);
-            firstStageNeighborhoods.add(i, firstStageNeighborhood);
+            SwitchTree firstStageNeighborhood = firstStageNeighborhoods.get(i);
 
             // depending on fault state of the second stage the corresponding first stage
             switch (secondStageFault) {
