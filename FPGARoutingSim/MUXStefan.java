@@ -290,7 +290,11 @@ public class MUXStefan {
         out.append("Mux Size: ").append(muxSize).append(" Inputs\n")
                 .append("Sink Node: ").append(sinkNodeID).append("\n")
                 .append("Switch ID: ").append(switchID).append("\n")
-                .append("Number of MemCells: ").append(getNumberOfMemCells()).append("\n");
+                .append("Number of MemCells: ").append(getNumberOfMemCells()).append("\n")
+                .append("Number of Faults:\n")
+                .append("Num. of SA0: ").append(numOfSA0).append(" Faults\n")
+                .append("Num. of SA1: ").append(numOfSA1).append(" Faults\n")
+                .append("Num. of UD:  ").append(numOfUD).append(" Faults\n");
         return out.toString();
     }
 
