@@ -11,11 +11,13 @@ public class MemCell6T2R implements MemCell{
     final private Resistor firstMemristor;
     final private Resistor secondMemristor;
     final private Fault memCellFault;
+    final private int numOfMemristorFaults;
 
     public MemCell6T2R(FaultRates faultRates){
         firstMemristor = new Resistor(faultRates);
         secondMemristor = new Resistor(faultRates);
         memCellFault = Objects.requireNonNull(calcCellFault(), "Memristor has nondefined Fault-State");
+        numOfMemristorFaults = calcMemristorFaults();
     }
 
     private Fault calcCellFault(){
@@ -53,10 +55,33 @@ public class MemCell6T2R implements MemCell{
         }
         return Fault.FF;
     }
+    private int calcMemristorFaults(){
+        int memristorFaults = 0;
+        if (firstMemristorContainsFault()){
+            memristorFaults++;
+        }
+        if (secondMemristorContainsFault()){
+            memristorFaults++;
+        }
+        return memristorFaults;
+    }
 
+    /**
+     * returns fault contained by the memory cell
+     * @return fault contained by the memory cell
+     */
     @Override
     public Fault getCellFault() {
         return memCellFault;
+    }
+
+    /**
+     * Returns the number of faulty memristors in this memory cell
+     * @return the number of faulty memristors
+     */
+    @Override
+    public int getNumOfFaultyMemristors() {
+        return numOfMemristorFaults;
     }
 
     private Resistor getFirstMemristor() { //TODO see if needed

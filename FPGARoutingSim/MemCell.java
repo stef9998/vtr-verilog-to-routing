@@ -12,4 +12,10 @@ public interface MemCell {
      */
     public Fault getCellFault();
 
+    /**
+     * Returns the number of faulty memristors in this memory cell
+     * @return the number of faulty memristors
+     */
+    public int getNumOfFaultyMemristors();
+
 }

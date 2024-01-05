@@ -614,7 +614,7 @@ public class MUXLukas {
     }
 
     /**
-     * returns the number of resistors with a fault
+     * returns the number of resistors with a fault (SA0, SA1, UD)
      * @return number of resistors with a fault
      */
     public int getNumberOfFaultyMemristors(){
@@ -625,34 +625,19 @@ public class MUXLukas {
         if(muxSize > blockSize) {
             // count number of faults in first stage
             for (int i = 0; i < blockSize; i++) {
-                if (((MemCell2T2R) frstStageSwitches[i].getControlCell()).puResContainsFault()) {
-                    numFault++;
-                }
-                if (((MemCell2T2R) frstStageSwitches[i].getControlCell()).pdResContainsFault()) {
-                    numFault++;
-                }
+                numFault += frstStageSwitches[i].getControlCell().getNumOfFaultyMemristors();
             }
 
             // count number of faults in second stage
             for (Switch scndStageSwitch : scndStageSwitches) {
-                if (((MemCell2T2R) scndStageSwitch.getControlCell()).puResContainsFault()) {
-                    numFault++;
-                }
-                if (((MemCell2T2R) scndStageSwitch.getControlCell()).pdResContainsFault()) {
-                    numFault++;
-                }
+                numFault += scndStageSwitch.getControlCell().getNumOfFaultyMemristors();
             }
         }
         // else if mux has only one stage
         else {
             // count number of faults in first stage
             for (Switch frstStageSwitch : frstStageSwitches) {
-                if (((MemCell2T2R) frstStageSwitch.getControlCell()).puResContainsFault()) {
-                    numFault++;
-                }
-                if (((MemCell2T2R) frstStageSwitch.getControlCell()).pdResContainsFault()) {
-                    numFault++;
-                }
+                numFault += frstStageSwitch.getControlCell().getNumOfFaultyMemristors();
             }
         }
 

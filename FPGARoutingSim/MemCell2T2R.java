@@ -6,11 +6,23 @@
  */
 public class MemCell2T2R implements MemCell{
     final private Resistor puRes, pdRes;    // pull-up and pull-down resistor/memristor of the memory cell
-
+    final private int numOfMemristorFaults;
     public MemCell2T2R(FaultRates faultRates){
         // initialize new pull-up and pull-down memristor with fault-rate
         this.puRes = new Resistor(faultRates);
         this.pdRes = new Resistor(faultRates);
+        this.numOfMemristorFaults = calcMemristorFaults();
+    }
+
+    private int calcMemristorFaults(){
+        int memristorFaults = 0;
+        if (puResContainsFault()){
+            memristorFaults++;
+        }
+        if (pdResContainsFault()){
+            memristorFaults++;
+        }
+        return memristorFaults;
     }
 
     /**
@@ -58,6 +70,15 @@ public class MemCell2T2R implements MemCell{
 
         // return the fault of the memory cell
         return fault;
+    }
+
+    /**
+     * Returns the number of faulty memristors in this memory cell
+     * @return the number of faulty memristors
+     */
+    @Override
+    public int getNumOfFaultyMemristors(){
+        return numOfMemristorFaults;
     }
 
     public boolean puResContainsFault(){

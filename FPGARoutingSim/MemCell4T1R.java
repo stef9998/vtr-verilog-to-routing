@@ -21,6 +21,15 @@ public class MemCell4T1R implements MemCell{
         return mem1.getFault();
     }
 
+    /**
+     * Returns the number of faulty memristors in this memory cell
+     * @return the number of faulty memristors
+     */
+    @Override
+    public int getNumOfFaultyMemristors() {
+        return mem1.containsFault() ? 1 : 0;
+    }
+
     //TODO after number of memristors with fault calculation is moved out of MUX, it can be added here.
 
 }
