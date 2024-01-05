@@ -13,7 +13,7 @@ public class MemCell4T1R implements MemCell{
     }
 
     /**
-     * returns fault contained by the memory cell
+     * Returns fault contained by the memory cell
      * @return fault contained by the memory cell
      */
     @Override

@@ -67,7 +67,7 @@ public class MemCell6T2R implements MemCell{
     }
 
     /**
-     * returns fault contained by the memory cell
+     * Returns fault contained by the memory cell
      * @return fault contained by the memory cell
      */
     @Override

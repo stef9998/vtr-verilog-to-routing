@@ -7,7 +7,7 @@
 public interface MemCell {
 
     /**
-     * returns fault contained by the memory cell
+     * Returns fault contained by the memory cell
      * @return fault contained by the memory cell
      */
     public Fault getCellFault();
