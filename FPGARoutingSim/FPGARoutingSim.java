@@ -63,7 +63,7 @@ public class FPGARoutingSim {
             numOfFaultyMemristors += muxLukas.getNumberOfFaultyMemristors();
 
             // increase the overall number of SA0, SA1 and UD
-            faults = muxLukas.getNumberOfFaults();
+            faults = muxLukas.getNumberOfFaultsPerType();
             for (int i = 0; i < faults.length; i++){
                 numOfFaults[i] += faults[i];
             }
