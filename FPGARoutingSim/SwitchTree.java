@@ -12,10 +12,10 @@ public class SwitchTree {
     List<Switch> switches;
     final int numOfSwitches;
 
-    boolean[] FFpos, SA0pos, SA1pos, UDpos;
+    boolean[] FFPos, SA0Pos, SA1Pos, UDPos;
     int numOfFF, numOfSA0, numOfSA1, numOfUD = 0;
 
-    List<RREdge> rrEdges;
+    private List<RREdge> rrEdges;
 
     /**
      * Constructs a SwitchTree with the specified number of switches, the memory cell type for the switches and the fault rates of the memristors.
@@ -34,7 +34,7 @@ public class SwitchTree {
                 switches.add(i, new Switch(constructor.newInstance(faultRates)));
             }
         } catch (ReflectiveOperationException e) {
-            // Handle exceptions if necessary
+            System.err.println("memCellType must be of Class MemCell");
             e.printStackTrace();
         }
         calculateFaults();
@@ -62,37 +62,54 @@ public class SwitchTree {
         calculateFaults();
     }
 
+    /**
+     * Calculates information for the switches.
+     * <p>
+     * The number each different fault types occurs and
+     * initializes arrays to track which switch has which fault.
+     */
     private void calculateFaults(){
-        FFpos = new boolean[numOfSwitches];
-        SA0pos = new boolean[numOfSwitches];
-        SA1pos = new boolean[numOfSwitches];
-        UDpos = new boolean[numOfSwitches];
+        FFPos = new boolean[numOfSwitches];
+        SA0Pos = new boolean[numOfSwitches];
+        SA1Pos = new boolean[numOfSwitches];
+        UDPos = new boolean[numOfSwitches];
         for (int i = 0; i < numOfSwitches; i++) {
             switch (switches.get(i).getFault()) {
                 case FF:
-                    FFpos[i] = true;
+                    FFPos[i] = true;
                     numOfFF ++;
                     break;
                 case SA1:
-                    SA1pos[i] = true;
+                    SA1Pos[i] = true;
                     numOfSA1 ++;
                     break;
                 case SA0:
-                    SA0pos[i] = true;
+                    SA0Pos[i] = true;
                     numOfSA0 ++;
                     break;
                 case UD:
-                    UDpos[i] = true;
+                    UDPos[i] = true;
                     numOfUD ++;
                     break;
             }
         }
     }
 
+    /**
+     * Gets the number of switches in the SwitchTree.
+     *
+     * @return the number of switches
+     */
     public int getNumOfSwitches() {
         return numOfSwitches;
     }
 
+    /**
+     * Gets the switch at the specified index.
+     *
+     * @param i index of the switch to get
+     * @return switch at the specified index, or null if the index is out of bounds
+     */
     public Switch getSwitch(int i){
         if (i>=0 && i < switches.size()){
             return switches.get(i);
@@ -101,27 +118,59 @@ public class SwitchTree {
         }
     }
 
+    /**
+     * Gets the fault type of the switch at the specified index.
+     *
+     * @param i the index of the switch
+     * @return the fault type of the switch at the specified index, or null if the index is out of bounds
+     */
     public Fault getFault(int i){
-        return getSwitch(i).getFault();
+        Switch aSwitch = getSwitch(i);
+        return (aSwitch != null) ? aSwitch.getFault() : null;
     }
 
+    /**
+     * Checks if there are any switches with the "UD" fault.
+     *
+     * @return true if there is at least one switch with the "UD" fault, false otherwise
+     */
     public boolean hasUD(){
         return numOfUD > 0;
     }
+
+    /**
+     * Checks if there are any switches with the "SA1" fault.
+     *
+     * @return true if there is at least one switch with the "SA1" fault, false otherwise
+     */
     public boolean hasSA1(){
         return numOfSA1 > 0;
     }
+
     /**
-     * Returns true only if exactly one {@link Switch} of all switches has an SA1 fault
-     * @return exactly one switch has an SA1 fault
+     * Checks if there is exactly one switch with the "SA1" fault.
+     *
+     * @return true if there is exactly one switch with the "SA1" fault, false otherwise
      */
     public boolean hasOneSA1(){
         return numOfSA1 == 1;
     }
+
+    /**
+     * Checks if there is more than one switch with the "SA1" fault.
+     *
+     * @return true if there is more than one switch with the "SA1" fault, false otherwise
+     */
     public boolean hasMoreThanOneSA1(){
         return numOfSA1 > 1;
     }
 
+    /**
+     * Gets the RR edge at the specified index.
+     *
+     * @param i the index of the RR edge
+     * @return the RR edge at the specified index, or null if the index is out of bounds
+     */
     public RREdge getRREdge(int i){
         if (i>=0 && i < rrEdges.size()){
             return rrEdges.get(i);
