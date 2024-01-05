@@ -625,19 +625,19 @@ public class MUXLukas {
         if(muxSize > blockSize) {
             // count number of faults in first stage
             for (int i = 0; i < blockSize; i++) {
-                numFault += frstStageSwitches[i].getControlCell().getNumOfFaultyMemristors();
+                numFault += frstStageSwitches[i].getNumOfFaultyMemristors();
             }
 
             // count number of faults in second stage
             for (Switch scndStageSwitch : scndStageSwitches) {
-                numFault += scndStageSwitch.getControlCell().getNumOfFaultyMemristors();
+                numFault += scndStageSwitch.getNumOfFaultyMemristors();
             }
         }
         // else if mux has only one stage
         else {
             // count number of faults in first stage
             for (Switch frstStageSwitch : frstStageSwitches) {
-                numFault += frstStageSwitch.getControlCell().getNumOfFaultyMemristors();
+                numFault += frstStageSwitch.getNumOfFaultyMemristors();
             }
         }
 
