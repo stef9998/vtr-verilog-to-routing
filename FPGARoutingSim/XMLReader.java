@@ -187,7 +187,7 @@ public class XMLReader{
         Copying to another List seems unnecessary as we could just get the node from (DOM-)NodeList.
         But getting Nodes from NodeList backward takes a long time for some reason.
         But when deleting them it probably needs to happen backward, so the DataStructure won't be messed up.
-          - This needs to be investigated.
+          - TODO This needs to be investigated.
             Because it might work anyway, as the one getting the Nodes to delete from is another then the one which deletes its children.
          */
         Node rrEdges = doc.getElementsByTagName("rr_edges").item(0);
