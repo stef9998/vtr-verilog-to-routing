@@ -27,9 +27,9 @@ public class Resistor {
     }
 
     /**
-     * returns true if memristor contains fault
+     * returns true if memristor contains fault (SA0, SA1, UD)
      */
-    public boolean contFault(){
+    public boolean containsFault(){
         return fault != Fault.FF;
     }
 

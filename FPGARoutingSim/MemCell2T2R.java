@@ -9,8 +9,8 @@ public class MemCell2T2R implements MemCell{
 
     public MemCell2T2R(FaultRates faultRates){
         // initialize new pull-up and pull-down memristor with fault-rate
-        puRes = new Resistor(faultRates);
-        pdRes = new Resistor(faultRates);
+        this.puRes = new Resistor(faultRates);
+        this.pdRes = new Resistor(faultRates);
     }
 
     /**
@@ -23,7 +23,7 @@ public class MemCell2T2R implements MemCell{
         Fault fault = Fault.FF;
 
         // if pull-up memristor contains fault and pull-down memristor contains no fault
-        if(puRes.contFault() && !pdRes.contFault()){
+        if(puRes.containsFault() && !pdRes.containsFault()){
             // check the fault of pull-up memristor
             switch (puRes.getFault()){
                 case SA1: fault = Fault.SA1; break;     // in case puRes contains SA1 memory cell is SA1
@@ -32,7 +32,7 @@ public class MemCell2T2R implements MemCell{
             }
         }
         // else if pull-down memristor contains fault and pull-up memristor contains no fault
-        else if(!puRes.contFault() && pdRes.contFault()){
+        else if(!puRes.containsFault() && pdRes.containsFault()){
             // check the fault of pull-down memristor
             switch (pdRes.getFault()){
                 case SA1: fault = Fault.SA0; break;     // in case pdRes contains SA1 memory cell is SA0
@@ -41,7 +41,7 @@ public class MemCell2T2R implements MemCell{
             }
         }
         // else if both contain fault
-        else if(puRes.contFault() && pdRes.contFault()){
+        else if(puRes.containsFault() && pdRes.containsFault()){
             // if both contain the same fault
             if(puRes.getFault() == pdRes.getFault()){
                 fault = Fault.UD;                       // memory cell is UD
@@ -60,11 +60,11 @@ public class MemCell2T2R implements MemCell{
         return fault;
     }
 
-    public boolean puResContFault(){
-        return puRes.contFault();
+    public boolean puResContainsFault(){
+        return puRes.containsFault();
     }
 
-    public boolean pdResContFault(){
-        return pdRes.contFault();
+    public boolean pdResContainsFault(){
+        return pdRes.containsFault();
     }
 }

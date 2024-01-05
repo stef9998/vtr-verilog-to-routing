@@ -625,20 +625,20 @@ public class MUXLukas {
         if(muxSize > blockSize) {
             // count number of faults in first stage
             for (int i = 0; i < blockSize; i++) {
-                if (((MemCell2T2R) frstStageSwitches[i].getControlCell()).puResContFault()) {
+                if (((MemCell2T2R) frstStageSwitches[i].getControlCell()).puResContainsFault()) {
                     numFault++;
                 }
-                if (((MemCell2T2R) frstStageSwitches[i].getControlCell()).pdResContFault()) {
+                if (((MemCell2T2R) frstStageSwitches[i].getControlCell()).pdResContainsFault()) {
                     numFault++;
                 }
             }
 
             // count number of faults in second stage
             for (Switch scndStageSwitch : scndStageSwitches) {
-                if (((MemCell2T2R) scndStageSwitch.getControlCell()).puResContFault()) {
+                if (((MemCell2T2R) scndStageSwitch.getControlCell()).puResContainsFault()) {
                     numFault++;
                 }
-                if (((MemCell2T2R) scndStageSwitch.getControlCell()).pdResContFault()) {
+                if (((MemCell2T2R) scndStageSwitch.getControlCell()).pdResContainsFault()) {
                     numFault++;
                 }
             }
@@ -647,10 +647,10 @@ public class MUXLukas {
         else {
             // count number of faults in first stage
             for (Switch frstStageSwitch : frstStageSwitches) {
-                if (((MemCell2T2R) frstStageSwitch.getControlCell()).puResContFault()) {
+                if (((MemCell2T2R) frstStageSwitch.getControlCell()).puResContainsFault()) {
                     numFault++;
                 }
-                if (((MemCell2T2R) frstStageSwitch.getControlCell()).pdResContFault()) {
+                if (((MemCell2T2R) frstStageSwitch.getControlCell()).pdResContainsFault()) {
                     numFault++;
                 }
             }

@@ -68,11 +68,11 @@ public class MemCell6T2R implements MemCell{
     }
 
     public boolean firstMemristorContainsFault() {
-        return firstMemristor.contFault();
+        return firstMemristor.containsFault();
     }
 
     public boolean secondMemristorContainsFault() {
-        return secondMemristor.contFault();
+        return secondMemristor.containsFault();
     }
 
     public Fault firstMemristorFault(){
