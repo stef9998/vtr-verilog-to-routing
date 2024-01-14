@@ -151,6 +151,7 @@ public class XMLReader{
 
     /**
      * @deprecated Use {@link #writeXML(int[][])} instead
+     * note: this needs the edges to be sorted in descending order
      */
     @Deprecated
     public void writeXMLOld(int[][] defectEdges){
