@@ -1,6 +1,4 @@
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
 import java.util.HashMap;
 
 /**
@@ -22,23 +20,19 @@ public class FPGARoutingSim {
         RUN_STEFAN_CODE = (CODE_SELECTOR == 1);
     }
 
-    static ArrayList<MUXLukas> muxesLukas = new ArrayList<>();          // array list containing the muxes
-    static ArrayList<MUXStefan> muxes = new ArrayList<>();              // array list containing the muxes
+    public static final int VERBOSITY = 0;
+    public static final boolean QUIET = false;
+
+    static ArrayList<MUX> muxes = new ArrayList<>();              // array list containing the muxes
     static ArrayList<int[]> defectEdges = new ArrayList<>();            // array list containing the defect edges
-    static ArrayList<int[]> defectEdgesStefan = new ArrayList<>();            // array list containing the defect edges
     static int[][] deleteList;                                          // array containing the delete list with defect edges
-    static int[][] deleteListStefan;                                          // array containing the delete list with defect edges
     static XMLReader reader = new XMLReader();                          // object of class XMLReader
     static FaultRates faultRates;                                       // object of class FaultRates
 
     public static void main(String[] args) {
         final long timeStart = System.currentTimeMillis();              // start time of simulation
-        int numOfEdgesLukas = 0, numOfDefectEdgesLukas = 0, numOfMemCellsLukas = 0, numOfFaultyMemristorsLukas = 0;    // total number of Edges, defect Edges and MemCells to configure Muxes in FPGA
-        int numOfEdgesStefan = 0, numOfDefectEdgesStefan = 0, numOfMemCellsStefan = 0, numOfFaultyMemristorsStefan = 0;    // total number of Edges, defect Edges and MemCells to configure Muxes in FPGA
-        int[] numOfFaultsLukas = new int[]{0, 0, 0};                         // total number of faults in order [SA0, SA1, UD] in MemCells to configure Muxes of FPGA
-        int numOfSA0FaultsLukas = 0, numOfSA1FaultsLukas = 0, numOfUDFaultsLukas = 0;
-        int[] numOfFaultsStefan = new int[]{0, 0, 0};                         // total number of faults in order [SA0, SA1, UD] in MemCells to configure Muxes of FPGA
-        int numOfSA0FaultsStefan = 0, numOfSA1FaultsStefan = 0, numOfUDFaultsStefan = 0;
+        int numOfEdges = 0, numOfDefectEdges = 0, numOfMemCells = 0, numOfFaultyMemristors = 0;    // total number of Edges, defect Edges and MemCells to configure Muxes in FPGA
+        int numOfSA0Faults = 0, numOfSA1Faults = 0, numOfUDFaults = 0;        // total number of faults in MemCells to configure Muxes of FPGA
         StringBuilder output = new StringBuilder();                     // String Builder for program output
 
         // get file name, read file and instantiate fault rates
@@ -46,93 +40,69 @@ public class FPGARoutingSim {
         reader.readXML(file);
         faultRates = new FaultRates( new double[]{ Double.parseDouble(args[1]), Double.parseDouble(args[2]), Double.parseDouble(args[3]) } );
 
-        System.out.println("Edges read!");
+        if (!QUIET)
+            System.out.println("Edges read");
 
-        // fill ArrayList<MUXLukas> muxes with multiplexers
         fillMuxArray();
+        if (!QUIET)
+            System.out.println("MUX Array filled");
 
-        System.out.println("MUX Array filled!");
-
-        // for every mux in array list of muxes
-        for (MUXLukas muxLukas : muxesLukas){
-            // add defect paths to defect edges
-            defectEdges.addAll(muxLukas.getRREdgeDeleteList());
+        for (MUX mux : muxes){
+            defectEdges.addAll(mux.getDefectRREdgesList());
 
             // increase the overall number of edges, defect edges and memory cells
-            numOfEdgesLukas += muxLukas.getNumberOfEdges();
-            numOfDefectEdgesLukas += muxLukas.getNumOfDefectEdges();
-            numOfMemCellsLukas += muxLukas.getNumberOfMemCells();
-            numOfFaultyMemristorsLukas += muxLukas.getNumberOfFaultyMemristors();
+            numOfEdges += mux.getNumberOfEdges();
+            numOfDefectEdges += mux.getNumOfDefectEdges();
+            numOfMemCells += mux.getNumberOfMemCells();
+            numOfFaultyMemristors += mux.getNumberOfFaultyMemristors();
 
             // increase the overall number of SA0, SA1 and UD
-            int[] faults = muxLukas.getNumberOfFaultsPerType();
-            for (int i = 0; i < faults.length; i++){
-                numOfFaultsLukas[i] += faults[i];
+            numOfSA0Faults += mux.getNumOfSA0();
+            numOfSA1Faults += mux.getNumOfSA1();
+            numOfUDFaults  += mux.getNumOfUD();
+        }
+
+        if (VERBOSITY >= 1) {
+        output.append("--- MUX Information -------------------------------------------------------------------------\n");
+            for (int i = 0; i < muxes.size(); i++) {
+                output.append("--- MUX No. ").append(i).append(" begin printout -----------------------------------------------------------\n");
+                output.append(muxes.get(i).printStats()).append("\n");
+                if (VERBOSITY >= 2) {
+                    output.append(muxes.get(i).printGraph());
+                }
+                output.append("--------------------------------------------------------------------------------------------\n");
             }
-            numOfSA0FaultsLukas += numOfFaultsLukas[0];
-            numOfSA1FaultsLukas += numOfFaultsLukas[1];
-            numOfUDFaultsLukas  += numOfFaultsLukas[2];
+        } //TODO output string: might run out of heap space for big circuits / rr-graphs
 
-            // append the graph and stats of every mux to the output of the program
-            output.append(muxLukas.printStats());
-            output.append(muxLukas.printGraph());
-            output.append("--------------------------------------------------------------------------------------------\n");
-        }
-        for (MUXStefan muxStefan : muxes){
-            defectEdgesStefan.addAll(muxStefan.getDefectRREdgesList());
-            numOfEdgesStefan += muxStefan.getNumberOfEdges();
-            numOfDefectEdgesStefan += muxStefan.getNumOfDefectEdges();
-            numOfMemCellsStefan += muxStefan.getNumberOfMemCells();
-            numOfFaultyMemristorsStefan += muxStefan.getNumberOfFaultyMemristors();
-            numOfSA0FaultsStefan += muxStefan.getNumOfSA0();
-            numOfSA1FaultsStefan += muxStefan.getNumOfSA1();
-            numOfUDFaultsStefan  += muxStefan.getNumOfUD();
+        if (!QUIET)
+            System.out.println("MUX Usabilities calculated");
 
-            output.append("---MUX Stefan - Begin-----------------------------------------------------------------------\n");
-            output.append(muxStefan.printStats());
-            output.append(muxStefan.printGraph());
-            output.append("---MUX Stefan - End-------------------------------------------------------------------------\n");
-        }
-
-
-        System.out.println("MUX Usabilities calculated!");
-
-        // List to Array //TODO might be possible to remove zwischenstep
+        // List to Array //TODO might be possible to remove this intermediate step
         deleteList = defectEdges.toArray(new int[defectEdges.size()][3]);
-        deleteListStefan = defectEdgesStefan.toArray(new int[defectEdgesStefan.size()][3]);
-
-        // Sort defect edges by RRGraph Index (the third element) in descending order
-        Arrays.sort(deleteList, Comparator.comparingInt((int[] a) -> a[2]).reversed());
-//        Arrays.parallelSort(deleteList, Comparator.comparingInt((int[] a) -> a[2]).reversed());
-        Arrays.sort(deleteListStefan, Comparator.comparingInt((int[] a) -> a[2]).reversed());
-
-        System.out.println("Defect Edges sorted!");
 
         // write data into xml file
-        if (RUN_LUKAS_CODE) {
-            reader.writeXML(deleteList);
-        }
-        if (RUN_STEFAN_CODE) {
-            reader.writeXML(deleteListStefan);
-        }
+        reader.writeXML(deleteList);
         reader.finalizeWriting();
 
-        System.out.println("XML written!");
+        if (!QUIET)
+            System.out.println("XML written");
+
+        if (!QUIET)
+            System.out.println("\nFPGARoutingSim ran successfully!\n"); // can probably be deleted as is redundant if next output will be printed out
 
         // add some overall output data
-        output.append("FPGARoutingSim ran successfully!\n");
-        output.append("It has ").append(muxesLukas.size()).append(" Multiplexers\n");
-        output.append("Number of configurable Edges in FPGA: ").append(numOfEdgesLukas).append("\n");
-        output.append("Number of defect Edges in FPGA after Fault Sim: ").append(numOfDefectEdgesLukas).append("\n");
-        output.append("Number of Memory Cells to set the Edges in FPGA: ").append(numOfMemCellsLukas).append("\n");
-        output.append("Number of SA0 in Memory Cells: ").append(numOfFaultsLukas[0]).append("\n");
-        output.append("Number of SA1 in Memory Cells: ").append(numOfFaultsLukas[1]).append("\n");
-        output.append("Number of UD in Memory Cells: ").append(numOfFaultsLukas[2]).append("\n");
-        output.append("Number of faulty Memristors: ").append(numOfFaultyMemristorsLukas).append("\n");
-        output.append("Number of total faults in Memory Cells: ").append(numOfFaultsLukas[0] + numOfFaultsLukas[1] + numOfFaultsLukas[2]).append("\n");
+        output.append("Circuit has ").append(muxes.size()).append(" Multiplexers\n");
+        output.append("Number of configurable Edges in FPGA: ").append(numOfEdges).append("\n");
+        output.append("Number of defect Edges in FPGA after Fault Sim: ").append(numOfDefectEdges).append("\n");
+        output.append("Number of Memory Cells to set the Edges in FPGA: ").append(numOfMemCells).append("\n");
+        output.append("Number of SA0 in Memory Cells: ").append(numOfSA0Faults).append("\n");
+        output.append("Number of SA1 in Memory Cells: ").append(numOfSA1Faults).append("\n");
+        output.append("Number of UD in Memory Cells: ").append(numOfUDFaults).append("\n");
+        output.append("Number of faulty Memristors: ").append(numOfFaultyMemristors).append("\n");
+        output.append("Number of total faults in Memory Cells: ").append(numOfSA0Faults + numOfSA1Faults + numOfUDFaults).append("\n");
         // set end time of the simulation and append overall time to output
         final long timeEnd = System.currentTimeMillis();
-        output.append("Needed ").append((timeEnd - timeStart)/1000).append(" s\n");
+        output.append("Needed ").append((timeEnd - timeStart)/1000).append(" s");
 
         // print output of the simulation
         System.out.print(output);
@@ -154,8 +124,17 @@ public class FPGARoutingSim {
                 // If Array List does not contain Nodes of RRNodeType SOURCE and those with Sink RRNodeType SINK
                 if (muxSrcNodes.get(0).getNodeType() != RRNodeType.SOURCE && muxSrcNodes.get(0).getSinkNodeType() != RRNodeType.SINK
                         && switchTypes.get(muxSrcNodes.get(0).getSwitchID()) == SwitchType.mux) {
-                    muxesLukas.add(new MUXLukas(muxSrcNodes, faultRates));      // Add new MUX
-                    muxes.add(new MUXStefan(muxSrcNodes, faultRates));          // Add new MUX
+                    switch (CODE_SELECTOR) {
+                        case 0:
+                            muxes.add(new MUXLukas(muxSrcNodes, faultRates));          // Add new MUX
+                            break;
+                        case 1:
+                            muxes.add(new MUXStefan(muxSrcNodes, faultRates));          // Add new MUX
+                            break;
+                        default:
+                            System.err.println("One of the mux types needs to be selected.");
+                            System.exit(-1);
+                    }
                 }
                 // Clear the List of MUX Source Nodes
                 muxSrcNodes.clear();
