@@ -1,0 +1,19 @@
+#VPR Packing Metrics
+num_post_packed_blocks;vpr.out;Netlist num_blocks:\s*(\d+)
+
+#VTR benchmark packing metrics
+num_clb;vpr.out;Netlist clb blocks:\s*(\d+)
+#num_io;vpr.out;Netlist inputs pins:\s*(\d+)
+num_memories;vpr.out;Netlist memory blocks:\s*(\d+)
+num_mult;vpr.out;Netlist mult_36 blocks:\s*(\d+)
+
+#Device Metrics
+device_width;vpr.out;FPGA sized to (\d+) x \d+
+device_height;vpr.out;FPGA sized to \d+ x (\d+)
+#device_grid_tiles;vpr.out;FPGA sized to \d+ x \d+: (\d+) grid tiles
+#device_limiting_resources;vpr.out;FPGA size limited by block type\(s\): (.*)
+
+#VPR Min W Routing Metrics
+min_chan_width;vpr.out;Best routing used a channel width factor of (\d+)
+
+device_utilisation;vpr.out;Device Utilization: (.*) \(target 1.00\)
