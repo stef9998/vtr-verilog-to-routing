@@ -6,7 +6,7 @@ import org.jgrapht.graph.SimpleDirectedGraph;
 /**
  * @author Lukas Freiberger
  */
-public class MUXLukas {
+public class MUXLukas extends MUX{
 
     private final int switchID, muxSize, blockSize;                                     // Index of sink node, ID of the switch, Number of source nodes, Maximum size of one input block
     private final HashMap<Integer, RRNodeType> srcNodeTypes = new HashMap<>();          // Hash Map with Source Node Types
@@ -466,7 +466,8 @@ public class MUXLukas {
      * returns the list with defect paths
      * @return [sourceID, sinkID, rrIndex]
      */
-    public ArrayList<int[]> getRREdgeDeleteList(){
+    @Override
+    public ArrayList<int[]> getDefectRREdgesList(){
         ArrayList<int[]> edges = new ArrayList<>();
 
         // extract relevant information for XMLReader/Writer
@@ -508,6 +509,7 @@ public class MUXLukas {
      * returns a readable representation of the MUX Graph
      * @return readable representation of the MUX Graph
      */
+    @Override
     public String printGraph(){
         StringBuilder out = new StringBuilder();
 
@@ -525,6 +527,7 @@ public class MUXLukas {
      *
      * @return statistics about the multiplexer
      */
+    @Override
     public String printStats(){
         // general information on MUX
         String out = ("Mux Size: " + muxSize + " Inputs\nSink Node: " + sinkVertex.getVertexID() + "\nSwitch ID: " + switchID);
@@ -544,6 +547,7 @@ public class MUXLukas {
      * returns the number of edges
      * @return number of edges
      */
+    @Override
     public int getNumberOfEdges(){
         return muxSize;
     }
@@ -552,6 +556,7 @@ public class MUXLukas {
      * returns the number of defect edges
      * @return number of defect edges
      */
+    @Override
     public int getNumOfDefectEdges(){
         return defectPaths.size();
     }
@@ -560,6 +565,7 @@ public class MUXLukas {
      * returns the number of mem cells used by the MUX
      * @return number of mem cells used by the MUX
      */
+    @Override
     public int getNumberOfMemCells(){
         return (muxSize > blockSize) ? ((muxSize/blockSize) + ((muxSize % blockSize != 0) ? 1 : 0) + blockSize) : muxSize;
     }
@@ -617,6 +623,7 @@ public class MUXLukas {
      * returns the number of resistors with a fault (SA0, SA1, UD)
      * @return number of resistors with a fault
      */
+    @Override
     public int getNumberOfFaultyMemristors(){
         // how much switches contain UD, SA1 or SA0
         int numFault = 0;
@@ -642,5 +649,20 @@ public class MUXLukas {
         }
 
         return numFault;
+    }
+
+    @Override
+    public int getNumOfSA0() {
+        return getNumberOfFaultsPerType()[0];
+    }
+
+    @Override
+    public int getNumOfSA1() {
+        return getNumberOfFaultsPerType()[1];
+    }
+
+    @Override
+    public int getNumOfUD() {
+        return getNumberOfFaultsPerType()[2];
     }
 }

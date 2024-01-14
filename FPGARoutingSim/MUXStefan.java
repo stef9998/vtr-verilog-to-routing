@@ -6,7 +6,7 @@ import java.util.*;
  * @author Lukas Freiberger
  * @author Stefan Reichel
  */
-public class MUXStefan {
+public class MUXStefan extends MUX{
 
     private final int switchID, sinkNodeID, muxSize, blockSize;                                     // Index of sink node, ID of the switch, Number of source nodes, Maximum size of one input block
     private final HashMap<Integer, RRNodeType> srcNodeTypes = new HashMap<>();          // Hash Map with Source Node Types
@@ -180,6 +180,7 @@ public class MUXStefan {
         return defectRREdges;
     }
 
+    @Override
     public List<int[]> getDefectRREdgesList() {
         List<int[]> edges = new ArrayList<>();
         int i = 0;
@@ -242,6 +243,7 @@ public class MUXStefan {
      * returns a readable representation of the MUX Graph
      * @return representation of the MUX Graph
      */
+    @Override
     public String printGraph(){
         // last sourceID is the biggest number, so also the longest. This length is used for padding the printout
         int lastSourceID = firstStageNeighborhoods.get(secondStageInDegree-1).getRREdge(firstStageNeighborhoods.get(secondStageInDegree-1).getNumOfSwitches()-1).getNodeID();
@@ -284,6 +286,7 @@ public class MUXStefan {
      * prints some statistics about the multiplexer
      * @return statistics about the multiplexer
      */
+    @Override
     public String printStats(){
         // general information on MUX
         StringBuilder out = new StringBuilder();
@@ -302,6 +305,7 @@ public class MUXStefan {
      * returns the number of edges
      * @return number of edges
      */
+    @Override
     public int getNumberOfEdges(){
         return muxSize;
     }
@@ -310,6 +314,7 @@ public class MUXStefan {
      * returns the number of defect edges
      * @return number of defect edges
      */
+    @Override
     public int getNumOfDefectEdges(){
         return defectRREdges.size();
     }
@@ -318,11 +323,13 @@ public class MUXStefan {
      * returns the number of mem cells used by the MUX
      * @return number of mem cells used by the MUX
      */
+    @Override
     public int getNumberOfMemCells(){
         // Every edge has one path with one memory cell in first stage. Then add path of second stage.
         return muxSize + secondStageInDegree;
     }
 
+    @Override
     public int getNumberOfFaultyMemristors(){
         return numOfFaultyMemristors;
     }
@@ -338,14 +345,17 @@ public class MUXStefan {
         return numOfFF;
     }
 
+    @Override
     public int getNumOfSA0() {
         return numOfSA0;
     }
 
+    @Override
     public int getNumOfSA1() {
         return numOfSA1;
     }
 
+    @Override
     public int getNumOfUD() {
         return numOfUD;
     }
