@@ -1,5 +1,3 @@
-import org.jgrapht.GraphPath;
-
 import java.util.*;
 
 /**
@@ -13,13 +11,10 @@ public class MUXStefan extends MUX{
     private final RRNodeType sinkRRNodeType;                                            // Node Type of Sink Node
     private final FaultRates faultRates;
     private final Set<RREdge> defectRREdges = new HashSet<>(); //TODO change to TreeSet maybe -> maybe not, as it will be sorted later anyways. And does not seem to be that slow. And we can change later how it will be sorted!
-    private ArrayList<Vertex> srcVertices = new ArrayList<>();                          // Source Vertex of the Graph
-//    Graph<Vertex, Switch> muxGraph = new SimpleDirectedGraph<>(Switch.class);   // Graph containing nodes and edges representing the MUX architecture //TODO if I want something for printout, do something close to this
 
     private SwitchTree secondStageNeighborhood;
     private final List<SwitchTree> firstStageNeighborhoods = new ArrayList<>(); //TODO maybe for printout. But I might still want to add a Neighborhood-Class to bundle everything
     private int secondStageInDegree;
-    private ArrayList<GraphPath<Vertex, Switch>> defectPaths = new ArrayList<>();       // array list of defect paths/edges in the mux
 
     private int numOfFaultyMemristors;
     // Faults of Switches/MemoryCells
