@@ -622,6 +622,8 @@ public class MUXLukas extends MUX{
     /**
      * returns the number of resistors with a fault (SA0, SA1, UD)
      * @return number of resistors with a fault
+     * Note: Seems to return the number of Switches with a faulty memristor,
+     * not number of faulty memristors.
      */
     @Override
     public int getNumberOfFaultyMemristors(){
