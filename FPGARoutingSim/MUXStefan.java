@@ -182,6 +182,7 @@ public class MUXStefan extends MUX{
 
     private int calcBlockSize(){
         return calcBlockSize2T2R();
+//        return 2;
     }
 
 
