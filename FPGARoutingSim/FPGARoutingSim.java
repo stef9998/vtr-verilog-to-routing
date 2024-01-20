@@ -21,7 +21,7 @@ public class FPGARoutingSim {
     }
 
     public static final int VERBOSITY = 0;
-    public static final boolean QUIET = false;
+    public static final boolean QUIET = true;
 
     static ArrayList<MUX> muxes = new ArrayList<>();              // array list containing the muxes
     static ArrayList<int[]> defectEdges = new ArrayList<>();            // array list containing the defect edges
