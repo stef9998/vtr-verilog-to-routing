@@ -62,6 +62,7 @@ public class MUXStefan extends MUX{
         secondStageInDegree = firstStageRREdgeNeighborhoods.size();
 
         secondStageNeighborhood = new SwitchTree(secondStageInDegree, MemCell4T1R.class, faultRates);
+//        secondStageNeighborhood = new SwitchTree(secondStageInDegree, MemCell6T2R.class, faultRates);
 
         for (int i = 0; i < secondStageInDegree; i++) {
             List<RREdge> firstStageRREdgeNeighborhood = firstStageRREdgeNeighborhoods.get(i);
@@ -117,6 +118,7 @@ public class MUXStefan extends MUX{
     private SwitchTree calculateFirstStageDefects(List<RREdge> rrEdges){
         // create a new switch for every rrEdge
         SwitchTree switchTree = new SwitchTree(rrEdges, MemCell4T1R.class, faultRates);
+//        SwitchTree switchTree = new SwitchTree(rrEdges, MemCell6T2R.class, faultRates);
         int numOfSwitches = switchTree.getNumOfSwitches();
 
         // UD or more than one SA1
