@@ -187,10 +187,18 @@ public class MUXStefan extends MUX{
     }
 
 
-    // calculates the block size such that number of mem cells is minimal
-    // TODO: is the old method from lukas. Does not minimize the memCells anymore.
-    //  minimal would now be the trivial case of one stage.
     private int calcBlockSize(){
+        return calcBlockSize2T2R();
+    }
+
+
+    /**
+     * Calculates the block size.
+     * In 2T2R MUX-Architecture this would make the number of memory cells minimal.
+     * @return the block size of the first stage
+     */
+    @Deprecated
+    private int calcBlockSize2T2R(){
         int blockSize = muxSize;        // initial block size is mux size
         int numOfMemCell = muxSize;     // initial number of mem cells is mux size
         int rest;                       // is one if there is an additional partial block
