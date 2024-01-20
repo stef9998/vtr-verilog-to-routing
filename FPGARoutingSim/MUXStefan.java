@@ -7,13 +7,11 @@ import java.util.*;
 public class MUXStefan extends MUX{
 
     private final int switchID, sinkNodeID, muxSize, blockSize;                                     // Index of sink node, ID of the switch, Number of source nodes, Maximum size of one input block
-    private final HashMap<Integer, RRNodeType> srcNodeTypes = new HashMap<>();          // Hash Map with Source Node Types
-    private final RRNodeType sinkRRNodeType;                                            // Node Type of Sink Node
     private final FaultRates faultRates;
-    private final Set<RREdge> defectRREdges = new HashSet<>(); //TODO change to TreeSet maybe -> maybe not, as it will be sorted later anyways. And does not seem to be that slow. And we can change later how it will be sorted!
+    private final Set<RREdge> defectRREdges = new HashSet<>();
 
     private SwitchTree secondStageNeighborhood;
-    private final List<SwitchTree> firstStageNeighborhoods = new ArrayList<>(); //TODO maybe for printout. But I might still want to add a Neighborhood-Class to bundle everything
+    private final List<SwitchTree> firstStageNeighborhoods = new ArrayList<>();
     private int secondStageInDegree;
 
     private int numOfFaultyMemristors;
@@ -29,14 +27,7 @@ public class MUXStefan extends MUX{
         this.switchID = rrEdges.get(0).getSwitchID();
         this.sinkNodeID = rrEdges.get(0).getSinkNodeID();
         this.muxSize = rrEdges.size();
-        this.blockSize = calcBlockSize(); //TODO
-
-        // Sink and Source Node Types for print out
-        this.sinkRRNodeType = rrEdges.get(0).getSinkNodeType();
-
-        for (RREdge rrEdge : rrEdges) {
-            this.srcNodeTypes.put(rrEdge.getNodeID(), rrEdge.getNodeType()); //TODO seems to be not used
-        }
+        this.blockSize = calcBlockSize();
 
         calculateUsability(rrEdges);
         fillSwitchesInfo();
@@ -239,9 +230,6 @@ public class MUXStefan extends MUX{
         return muxSize <= blockSize;
     }
 
-    //TODO put Switch/Fault/... in usage-calculation into new fields to print them out if needed
-    //TODO change naming maybe, as I am not using a graph anymore
-    // maybe leave for backwards compatibility. But make it @deprecated?
     /**
      * returns a readable representation of the MUX Graph
      * @return representation of the MUX Graph
