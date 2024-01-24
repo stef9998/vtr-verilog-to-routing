@@ -190,6 +190,7 @@ public class XMLReader{
         int sinkNode, srcNode;
         List<Node> nodeList = new ArrayList<>();
 
+//        Arrays.parallelSort(defectEdges, Comparator.comparingInt(a -> a[2]));
         Arrays.sort(defectEdges, Comparator.comparingInt(a -> a[2]));
         for (int[] defectEdge: defectEdges) {
             nodeList.add(edgeList.item(defectEdge[2]));
