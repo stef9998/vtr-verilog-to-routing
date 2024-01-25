@@ -20,8 +20,8 @@ public class FPGARoutingSim {
         RUN_STEFAN_CODE = (CODE_SELECTOR == 1);
     }
 
-    public static final int VERBOSITY = 0;
-    public static final boolean QUIET = true;
+    public static final int VERBOSITY = 2;
+    public static final boolean QUIET = false;
 
     static ArrayList<MUX> muxes = new ArrayList<>();              // array list containing the muxes
     static ArrayList<int[]> defectEdges = new ArrayList<>();            // array list containing the defect edges

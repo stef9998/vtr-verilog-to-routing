@@ -330,7 +330,7 @@ def run(
             vpr_args["read_rr_graph"] = rr_graph_file
 
             # do fault simulation
-            cmdfsim = ["java", "-Xmx2G", "-jar", str(paths.routing_ft_jar_path), rr_graph_file, str(fault_rate),
+            cmdfsim = ["java", "-Xmx5G", "-jar", str(paths.routing_ft_jar_path), rr_graph_file, str(fault_rate),
                        str(fault_rate), str(fault_rate)]
             command_runner.run_system_command(cmdfsim, temp_dir=temp_dir, log_filename="routing_ft.out")
 

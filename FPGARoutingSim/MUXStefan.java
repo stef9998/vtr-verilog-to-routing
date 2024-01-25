@@ -6,7 +6,7 @@ import java.util.*;
  */
 public class MUXStefan extends MUX{
 
-    private final int switchID, sinkNodeID, muxSize, blockSize;                                     // Index of sink node, ID of the switch, Number of source nodes, Maximum size of one input block
+    private final int switchID, sinkNodeID, muxSize, blockSize; // Index of sink node, ID of the switch, Number of source nodes, Maximum size of one input block
     private final FaultRates faultRates;
     private final Set<RREdge> defectRREdges = new HashSet<>();
 
@@ -15,13 +15,11 @@ public class MUXStefan extends MUX{
     private int secondStageInDegree;
 
     private int numOfFaultyMemristors;
-    // Faults of Switches/MemoryCells
     private int numOfFF, numOfSA0, numOfSA1, numOfUD;
 
     // Constructor
     public MUXStefan(ArrayList<RREdge> rrEdges, FaultRates faultRates){
         this.faultRates = faultRates;
-//        this.rrEdges = rrEdges;
 
         // Set switchID, sinkNodeID, muxSize and maxBlockSize
         this.switchID = rrEdges.get(0).getSwitchID();
@@ -61,8 +59,8 @@ public class MUXStefan extends MUX{
         List<List<RREdge>> firstStageRREdgeNeighborhoods = ListSplitter.splitList(rrEdges, blockSize);
         secondStageInDegree = firstStageRREdgeNeighborhoods.size();
 
-        secondStageNeighborhood = new SwitchTree(secondStageInDegree, MemCell4T1R.class, faultRates);
-//        secondStageNeighborhood = new SwitchTree(secondStageInDegree, MemCell6T2R.class, faultRates);
+//        secondStageNeighborhood = new SwitchTree(secondStageInDegree, MemCell4T1R.class, faultRates);
+        secondStageNeighborhood = new SwitchTree(secondStageInDegree, MemCell6T2R.class, faultRates);
 
         for (int i = 0; i < secondStageInDegree; i++) {
             List<RREdge> firstStageRREdgeNeighborhood = firstStageRREdgeNeighborhoods.get(i);
@@ -110,7 +108,6 @@ public class MUXStefan extends MUX{
         }
 
         if (unDisconnectableSA1s > 1) {
-            //TODO now that there is a SwitchTree class, I can make the calculation efficient
             deleteEveryEdge(firstStageRREdgeNeighborhoods);
         }
     }
@@ -183,6 +180,7 @@ public class MUXStefan extends MUX{
     private int calcBlockSize(){
         return calcBlockSize2T2R();
 //        return 2;
+//        return 3;
     }
 
 
